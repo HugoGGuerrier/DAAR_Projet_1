@@ -1,4 +1,4 @@
-package egrep;
+package egrep.parser;
 
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -235,32 +235,5 @@ public class RegEx {
     subTrees.add(a);
     subTrees.add(dotBCEtoile);
     return new RegExTree(ALTERN, subTrees);
-  }
-}
-
-class RegExTree {
-  public int root;
-  public ArrayList<RegExTree> subTrees;
-
-  public RegExTree(int root, ArrayList<RegExTree> subTrees) {
-    this.root = root;
-    this.subTrees = subTrees;
-  }
-
-  //FROM TREE TO PARENTHESIS
-  @Override
-  public String toString() {
-    if (subTrees.isEmpty()) return rootToString();
-    String result = rootToString()+"("+subTrees.get(0).toString();
-    for (int i=1;i<subTrees.size();i++) result+=","+subTrees.get(i).toString();
-    return result+")";
-  }
-
-  private String rootToString() {
-    if (root==RegEx.CONCAT) return ".";
-    if (root==RegEx.ETOILE) return "*";
-    if (root==RegEx.ALTERN) return "|";
-    if (root==RegEx.DOT) return ".";
-    return Character.toString((char)root);
   }
 }

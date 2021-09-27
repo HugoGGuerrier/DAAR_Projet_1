@@ -1,1 +1,8 @@
+# Exclude for ant
+egrep.jar
 build
+
+# Exclude for ItelliJ
+out
+.idea
+*.iml
