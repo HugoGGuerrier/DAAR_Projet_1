@@ -1,7 +1,23 @@
 <project>
 
+    <property name="build_dir" value="${basedir}/build" />
+    <property name="jar_file" value="${basedir}/egrep.jar" />
+
     <target name="clean">
-        <delete dir="${basedir}/build" />
+        <delete dir="${build_dir}" />
+        <delete file="${jar_file}" />
+    </target>
+
+    <target name="build">
+        <mkdir dir="${build_dir}" />
+    </target>
+
+    <target name="jar" depends="build">
+        
+    </target>
+
+    <target name="run" depends="jar">
+        <java jar="${jar_file}" />
     </target>
 
 </project>
