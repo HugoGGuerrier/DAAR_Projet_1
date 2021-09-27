@@ -76,10 +76,10 @@ public class RegExTree {
      * @return The string representing the root
      */
     private String rootToString() {
-        if (root==RegEx.CONCAT) return ".";
-        if (root==RegEx.ETOILE) return "*";
-        if (root==RegEx.ALTERN) return "|";
-        if (root==RegEx.DOT) return ".";
+        if (root== RegExParser.CONCAT) return ".";
+        if (root== RegExParser.STAR) return "*";
+        if (root== RegExParser.ALTERN) return "|";
+        if (root== RegExParser.DOT) return ".";
         return Character.toString((char) root);
     }
 
