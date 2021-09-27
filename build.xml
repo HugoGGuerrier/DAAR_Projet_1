@@ -1,5 +1,7 @@
 <project>
 
-
+    <target name="clean">
+        <delete dir="${basedir}/build" />
+    </target>
 
 </project>
