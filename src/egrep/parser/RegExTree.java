@@ -60,8 +60,12 @@ public class RegExTree {
 
         StringBuilder res = new StringBuilder();
         res.append(rootToString()).append('(');
-        for(RegExTree subTree : subTrees) {
-            res.append(',').append(subTree.toString());
+        for(int i = 0 ; i < subTrees.size() ; i++) {
+            RegExTree subTree = subTrees.get(i);
+            res.append(subTree.toString());
+            if(i < subTrees.size() - 1) {
+                res.append(", ");
+            }
         }
         res.append(')');
 

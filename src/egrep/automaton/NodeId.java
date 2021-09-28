@@ -36,7 +36,8 @@ public class NodeId {
     @Override
     public boolean equals(Object o) {
         if (o == null) return false;
-        if (!(o instanceof NodeId node)) return false;
+        if (!(o instanceof NodeId)) return false;
+        NodeId node = (NodeId) o;
         return keys.equals(node.keys);
     }
 
