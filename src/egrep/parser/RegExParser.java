@@ -1,6 +1,5 @@
 package egrep.parser;
 
-import java.util.Scanner;
 import java.util.ArrayList;
 
 import java.lang.Exception;
@@ -49,119 +48,197 @@ public class RegExParser {
 
     // ----- Class methods -----
 
-    //FROM REGEX TO SYNTAX TREE
-    private RegExTree parse() throws Exception {
-        //BEGIN DEBUG: set conditionnal to true for debug example
-        if (false) throw new Exception();
-        RegExTree example = exampleAhoUllman();
-        if (false) return example;
-        //END DEBUG
+    /**
+     * Start the parsing process and return the result
+     *
+     * @return The regex tree
+     * @throws Exception If there is an error during the parsing process
+     */
+    public RegExTree parse() throws Exception {
+        // Avoid parsing repetition
+        if(parseResult != null) {
+            return parseResult;
+        }
 
-        ArrayList<RegExTree> result = new ArrayList<RegExTree>();
-        for (int i=0;i<regEx.length();i++) result.add(new RegExTree(charToRoot(regEx.charAt(i)),new ArrayList<RegExTree>()));
+        // Prepare the result
+        ArrayList<RegExTree> result = new ArrayList<>();
+        for (int i=0 ; i<regEx.length() ; i++) {
+            result.add(new RegExTree(charToRoot(regEx.charAt(i)), new ArrayList<>()));
+        }
 
-        return parse(result);
+        // Parse the regex
+        parseResult = parse(result);
+
+        // Return the result
+        return parseResult;
     }
 
-    private static int charToRoot(char c) {
+    private int charToRoot(char c) {
         if (c=='.') return DOT;
-        if (c=='*') return ETOILE;
+        if (c=='*') return STAR;
         if (c=='|') return ALTERN;
-        if (c=='(') return PARENTHESEOUVRANT;
-        if (c==')') return PARENTHESEFERMANT;
-        return (int)c;
+        if (c=='(') return L_PAREN;
+        if (c==')') return R_PAREN;
+        return c;
     }
 
-    private static RegExTree parse(ArrayList<RegExTree> result) throws Exception {
-        while (containParenthese(result)) result=processParenthese(result);
-        while (containEtoile(result)) result=processEtoile(result);
-        while (containConcat(result)) result=processConcat(result);
-        while (containAltern(result)) result=processAltern(result);
+    private RegExTree parse(ArrayList<RegExTree> result) throws Exception {
+        // Process all special chars
+        while (containsParenthesis(result)) result= processParenthesis(result);
+        while (containsStar(result)) result=processEtoile(result);
+        while (containsConcat(result)) result=processConcat(result);
+        while (containsAltern(result)) result=processAltern(result);
 
-        if (result.size()>1) throw new Exception();
+        // Verify that the result doesn't have multiple root
+        if (result.size() > 1) {
+            throw new Exception("Multiple root tree is impossible");
+        }
 
+        // Return the result removing the protection
         return removeProtection(result.get(0));
     }
 
-    private static boolean containParenthese(ArrayList<RegExTree> trees) {
-        for (RegExTree t: trees) if (t.root==PARENTHESEFERMANT || t.root==PARENTHESEOUVRANT) return true;
+    private boolean containsParenthesis(ArrayList<RegExTree> trees) {
+        // Look for the left parenthesis or right parenthesis
+        for (RegExTree t: trees) {
+            return t.getRoot() == L_PAREN || t.getRoot() == R_PAREN;
+        }
+
+        // If nothing found, return false
         return false;
     }
 
-    private static ArrayList<RegExTree> processParenthese(ArrayList<RegExTree> trees) throws Exception {
-        ArrayList<RegExTree> result = new ArrayList<RegExTree>();
+    private ArrayList<RegExTree> processParenthesis(ArrayList<RegExTree> trees) throws Exception {
+        // Prepare the result
+        ArrayList<RegExTree> result = new ArrayList<>();
+
+        // Prepare the working variables
         boolean found = false;
+        boolean done = false;
+
         for (RegExTree t: trees) {
-            if (!found && t.root==PARENTHESEFERMANT) {
-                boolean done = false;
-                ArrayList<RegExTree> content = new ArrayList<RegExTree>();
-                while (!done && !result.isEmpty())
-                    if (result.get(result.size()-1).root==PARENTHESEOUVRANT) { done = true; result.remove(result.size()-1); }
-                    else content.add(0,result.remove(result.size()-1));
-                if (!done) throw new Exception();
+            if (!found && t.getRoot() == R_PAREN) {
+
+                // Prepare the parenthesis content
+                ArrayList<RegExTree> content = new ArrayList<>();
+
+                // While there is no left parenthesis, add the precedent tree to the parent content
+                while (!done && !result.isEmpty()) {
+                    if (result.get(result.size() - 1).getRoot() == L_PAREN) {
+                        done = true;
+                        result.remove(result.size() - 1);
+                    } else {
+                        content.add(0, result.remove(result.size() - 1));
+                    }
+                }
+
+                // If there is not left parenthesis throw an exception
+                if (!done) {
+                    throw new Exception("Error during parsing : missing '(' parenthesis");
+                }
+
+                // We found the parent content, lets parse it !
                 found = true;
-                ArrayList<RegExTree> subTrees = new ArrayList<RegExTree>();
+                ArrayList<RegExTree> subTrees = new ArrayList<>();
                 subTrees.add(parse(content));
                 result.add(new RegExTree(PROTECTION, subTrees));
+
             } else {
                 result.add(t);
             }
         }
-        if (!found) throw new Exception();
+
+        // Throw exception if there is a missing parenthesis
+        if (!found) {
+            throw new Exception("Error during parsing : missing ')' parenthesis");
+        }
+
+        // Return the parsing result
         return result;
     }
 
-    private static boolean containEtoile(ArrayList<RegExTree> trees) {
-        for (RegExTree t: trees) if (t.root==ETOILE && t.subTrees.isEmpty()) return true;
+    private boolean containsStar(ArrayList<RegExTree> trees) {
+        // Look for a star operator
+        for (RegExTree t: trees) {
+            return t.getRoot() == STAR && t.getSubTrees().isEmpty();
+        }
+
+        // If nothing found, return false
         return false;
     }
 
-    private static ArrayList<RegExTree> processEtoile(ArrayList<RegExTree> trees) throws Exception {
-        ArrayList<RegExTree> result = new ArrayList<RegExTree>();
+    private ArrayList<RegExTree> processEtoile(ArrayList<RegExTree> trees) throws Exception {
+        // Prepare the result
+        ArrayList<RegExTree> result = new ArrayList<>();
+
+        // Prepare the working variables
         boolean found = false;
+
         for (RegExTree t: trees) {
-            if (!found && t.root==ETOILE && t.subTrees.isEmpty()) {
-                if (result.isEmpty()) throw new Exception();
+            if (!found && t.getRoot() == STAR && t.getSubTrees().isEmpty()) {
+
+                // If there is no char for * , throw an exception
+                if (result.isEmpty()) {
+                    throw new Exception("Error during parsing : '*' need a character");
+                }
+
+                // We found it, let's add the result
                 found = true;
                 RegExTree last = result.remove(result.size()-1);
-                ArrayList<RegExTree> subTrees = new ArrayList<RegExTree>();
+                ArrayList<RegExTree> subTrees = new ArrayList<>();
                 subTrees.add(last);
-                result.add(new RegExTree(ETOILE, subTrees));
+                result.add(new RegExTree(STAR, subTrees));
+
             } else {
                 result.add(t);
             }
         }
+
+        // Return the parsing result
         return result;
     }
 
-    private static boolean containConcat(ArrayList<RegExTree> trees) {
+    private boolean containsConcat(ArrayList<RegExTree> trees) {
+        // Prepare the working variable
         boolean firstFound = false;
+
+        // Look for the concatenation (implicit)
         for (RegExTree t: trees) {
-            if (!firstFound && t.root!=ALTERN) { firstFound = true; continue; }
-            if (firstFound) if (t.root!=ALTERN) return true; else firstFound = false;
+            if(!firstFound && t.getRoot() != ALTERN) {
+                firstFound = true;
+            } else if(firstFound) {
+                if (t.getRoot() != ALTERN) {
+                    return true;
+                } else {
+                    firstFound = false;
+                }
+            }
         }
+
+        // If nothing found, return false
         return false;
     }
 
-    private static ArrayList<RegExTree> processConcat(ArrayList<RegExTree> trees) throws Exception {
-        ArrayList<RegExTree> result = new ArrayList<RegExTree>();
+    private ArrayList<RegExTree> processConcat(ArrayList<RegExTree> trees) {
+        // Prepare the result
+        ArrayList<RegExTree> result = new ArrayList<>();
+
+        // Prepare the working variables
         boolean found = false;
         boolean firstFound = false;
+
         for (RegExTree t: trees) {
-            if (!found && !firstFound && t.root!=ALTERN) {
+            if (!found && !firstFound && t.getRoot() != ALTERN) {
                 firstFound = true;
                 result.add(t);
-                continue;
-            }
-            if (!found && firstFound && t.root==ALTERN) {
+            } else if (!found && firstFound && t.getRoot() == ALTERN) {
                 firstFound = false;
                 result.add(t);
-                continue;
-            }
-            if (!found && firstFound && t.root!=ALTERN) {
+            } else if (!found && firstFound && t.getRoot() != ALTERN) {
+                // We found a concatenation let's add it
                 found = true;
                 RegExTree last = result.remove(result.size()-1);
-                ArrayList<RegExTree> subTrees = new ArrayList<RegExTree>();
+                ArrayList<RegExTree> subTrees = new ArrayList<>();
                 subTrees.add(last);
                 subTrees.add(t);
                 result.add(new RegExTree(CONCAT, subTrees));
@@ -169,27 +246,38 @@ public class RegExParser {
                 result.add(t);
             }
         }
+
+        // Return the result
         return result;
     }
 
-    private static boolean containAltern(ArrayList<RegExTree> trees) {
-        for (RegExTree t: trees) if (t.root==ALTERN && t.subTrees.isEmpty()) return true;
+    private boolean containsAltern(ArrayList<RegExTree> trees) {
+        // Look for the alternative symbol
+        for (RegExTree t: trees) {
+            return t.getRoot() == ALTERN && t.getSubTrees().isEmpty();
+        }
+
+        // Return the result
         return false;
     }
 
-    private static ArrayList<RegExTree> processAltern(ArrayList<RegExTree> trees) throws Exception {
-        ArrayList<RegExTree> result = new ArrayList<RegExTree>();
+    private ArrayList<RegExTree> processAltern(ArrayList<RegExTree> trees) throws Exception {
+        // Prepare the result
+        ArrayList<RegExTree> result = new ArrayList<>();
+
+        // Prepare the working variables
         boolean found = false;
-        RegExTree gauche = null;
         boolean done = false;
+        RegExTree gauche = null;
+
         for (RegExTree t: trees) {
-            if (!found && t.root==ALTERN && t.subTrees.isEmpty()) {
-                if (result.isEmpty()) throw new Exception();
+            if (!found && t.getRoot() == ALTERN && t.getSubTrees().isEmpty()) {
+                if (result.isEmpty()) {
+                    throw new Exception("Error during parsing : missing '|' left part");
+                }
                 found = true;
                 gauche = result.remove(result.size()-1);
-                continue;
-            }
-            if (found && !done) {
+            } else if (found && !done) {
                 if (gauche==null) throw new Exception();
                 done=true;
                 ArrayList<RegExTree> subTrees = new ArrayList<RegExTree>();
@@ -203,7 +291,7 @@ public class RegExParser {
         return result;
     }
 
-    private static RegExTree removeProtection(RegExTree tree) throws Exception {
+    private RegExTree removeProtection(RegExTree tree) throws Exception {
         if (tree.root==PROTECTION && tree.subTrees.size()!=1) throw new Exception();
         if (tree.subTrees.isEmpty()) return tree;
         if (tree.root==PROTECTION) return removeProtection(tree.subTrees.get(0));
@@ -215,7 +303,7 @@ public class RegExParser {
 
     //EXAMPLE
     // --> RegEx from Aho-Ullman book Chap.10 Example 10.25
-    private static RegExTree exampleAhoUllman() {
+    private RegExTree exampleAhoUllman() {
         RegExTree a = new RegExTree((int)'a', new ArrayList<RegExTree>());
         RegExTree b = new RegExTree((int)'b', new ArrayList<RegExTree>());
         RegExTree c = new RegExTree((int)'c', new ArrayList<RegExTree>());
