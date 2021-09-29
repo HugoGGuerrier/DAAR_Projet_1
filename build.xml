@@ -4,7 +4,7 @@
     <property name="lib_dir" value="${basedir}/lib" />
     <property name="build_dir" value="${basedir}/build" />
     <property name="bin_dir" value="${basedir}/bin" />
-    
+
     <property name="jar_file" value="${bin_dir}/egrep.jar" />
 
     <path id="class_path">
