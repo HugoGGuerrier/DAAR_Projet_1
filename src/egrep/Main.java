@@ -1,8 +1,15 @@
 package egrep;
 
+import egrep.parser.RegExParser;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("TEST OK!!!");
+        RegExParser parser = new RegExParser("(a|)|bc*");
+        try {
+            System.out.println(parser.parse());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

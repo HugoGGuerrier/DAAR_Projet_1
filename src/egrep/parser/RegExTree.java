@@ -60,8 +60,12 @@ public class RegExTree {
 
         StringBuilder res = new StringBuilder();
         res.append(rootToString()).append('(');
-        for(RegExTree subTree : subTrees) {
-            res.append(',').append(subTree.toString());
+        for(int i = 0 ; i < subTrees.size() ; i++) {
+            RegExTree subTree = subTrees.get(i);
+            res.append(subTree.toString());
+            if(i < subTrees.size() - 1) {
+                res.append(", ");
+            }
         }
         res.append(')');
 
@@ -76,10 +80,10 @@ public class RegExTree {
      * @return The string representing the root
      */
     private String rootToString() {
-        if (root==RegEx.CONCAT) return ".";
-        if (root==RegEx.ETOILE) return "*";
-        if (root==RegEx.ALTERN) return "|";
-        if (root==RegEx.DOT) return ".";
+        if (root== RegExParser.CONCAT) return ".";
+        if (root== RegExParser.STAR) return "*";
+        if (root== RegExParser.ALTERN) return "|";
+        if (root== RegExParser.DOT) return ".";
         return Character.toString((char) root);
     }
 
