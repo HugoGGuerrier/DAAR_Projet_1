@@ -1,4 +1,4 @@
-package egrep.automaton;
+package egrep.main.automaton;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -1,12 +1,9 @@
-package egrep.automaton;
+package egrep.main.automaton;
 
-import egrep.parser.RegExTree;
+import egrep.main.parser.RegExTree;
 
-import java.lang.reflect.Array;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * An automaton is represented by a Map of keys:NodeId and values:[259 NodeId]

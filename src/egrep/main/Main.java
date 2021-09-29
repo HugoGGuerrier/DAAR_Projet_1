@@ -1,6 +1,6 @@
-package egrep;
+package egrep.main;
 
-import egrep.parser.RegExParser;
+import egrep.main.parser.RegExParser;
 
 public class Main {
     public static void main(String[] args) {

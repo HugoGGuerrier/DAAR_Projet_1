@@ -1,4 +1,4 @@
-package egrep.parser;
+package egrep.main.parser;
 
 import java.util.ArrayList;
 
