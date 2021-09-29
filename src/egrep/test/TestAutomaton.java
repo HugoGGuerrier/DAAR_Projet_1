@@ -1,12 +1,12 @@
 package egrep.test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("A test suite for the RegEx parser")
-public class TestParser {
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@DisplayName("A test suite for the automaton and all its methods")
+public class TestAutomaton {
 
     /**
      * Check the test suite availability

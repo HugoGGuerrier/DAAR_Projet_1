@@ -1,24 +1,55 @@
-<project>
+<project name="egrep" default="jar">
 
+    <property name="src_dir" value="${basedir}/src" />
+    <property name="lib_dir" value="${basedir}/lib" />
     <property name="build_dir" value="${basedir}/build" />
-    <property name="jar_file" value="${basedir}/egrep.jar" />
+    <property name="bin_dir" value="${basedir}/bin" />
+    
+    <property name="jar_file" value="${bin_dir}/egrep.jar" />
 
-    <target name="clean">
+    <path id="class_path">
+        <pathelement path="${build_dir}" />
+        <fileset dir="${lib_dir}" includes="*.jar" />
+    </path>
+
+    <target name="clean" description="Clean the building dirs and jar files">
         <delete dir="${build_dir}" />
-        <delete file="${jar_file}" />
+        <delete dir="${bin_dir}" />
     </target>
 
-    <target name="build">
+    <target name="build" description="Compile all the java sources">
         <mkdir dir="${build_dir}" />
-
+        <javac srcdir="${src_dir}"
+               destdir="${build_dir}"
+               classpathref="class_path"
+               includeantruntime="false"
+               target="1.8" source="1.8" />
     </target>
 
-    <target name="jar" depends="build">
-        
+    <target name="jar" depends="build" description="Build a jar file">
+        <mkdir dir="${bin_dir}" />
+
+        <jar destfile="${jar_file}" basedir="${build_dir}" excludes="**/test/**">
+            <manifest>
+                <attribute name="Main-Class" value="egrep.main.Main"/>
+            </manifest>
+        </jar>
     </target>
 
-    <target name="run" depends="jar">
-        <java jar="${jar_file}" />
+    <target name="run" depends="jar" description="Run the jar file">
+        <java fork="true" jar="${jar_file}" />
+    </target>
+
+    <target name="test" depends="build" description="Start all unit tests">
+        <junitlauncher printsummary="true">
+            <classpath refid="class_path" />
+
+            <testclasses>
+                <fileset dir="${build_dir}">
+                    <include name="egrep/test/*" />
+                </fileset>
+            </testclasses>
+        </junitlauncher>
     </target>
 
 </project>

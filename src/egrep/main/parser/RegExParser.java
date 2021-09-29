@@ -4,18 +4,24 @@ import java.util.ArrayList;
 
 import java.lang.Exception;
 
+/**
+ * The regular expression parser
+ *
+ * @author Emilie SIAU
+ * @author Hugo GUERRIER
+ */
 public class RegExParser {
 
-    // ----- Static values -----
+    // ----- Macros -----
 
-    static final int CONCAT = 0xC04CA7;
-    static final int STAR = 0xE7011E;
-    static final int ALTERN = 0xA17E54;
-    static final int PROTECTION = 0xBADDAD;
+    static final int CONCAT = 0;
+    static final int STAR = 1;
+    static final int ALTERN = 2;
+    static final int PROTECTION = 3;
 
-    static final int L_PAREN = 0x16641664;
-    static final int R_PAREN = 0x51515151;
-    static final int DOT = 0xD07;
+    static final int L_PAREN = 4;
+    static final int R_PAREN = 5;
+    static final int DOT = 6;
 
     // ----- Attributes -----
 
@@ -34,6 +40,9 @@ public class RegExParser {
         this.parseResult = null;
     }
 
+    /**
+     * Create a new regex without aunything
+     */
     public RegExParser() {
         this.regEx = null;
         this.parseResult = null;
