@@ -1,7 +1,14 @@
 package egrep.test;
 
+import egrep.main.automaton.NodeId;
+import egrep.main.parser.RegExParser;
+import egrep.main.parser.RegExTree;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,4 +23,9 @@ public class TestAutomaton {
         assertTrue(true);
     }
 
+    @Test
+    void testAhoUllman() {
+        RegExTree tree = RegExParser.exampleAhoUllman();
+        // TODO : la suite
+    }
 }

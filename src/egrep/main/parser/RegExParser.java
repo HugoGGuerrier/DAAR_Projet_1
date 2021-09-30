@@ -14,14 +14,14 @@ public class RegExParser {
 
     // ----- Macros -----
 
-    public static final int CONCAT = 0;
-    public static final int STAR = 1;
-    public static final int ALTERN = 2;
-    public static final int PROTECTION = 3;
+    public static final int CONCAT = 0xFF1;
+    public static final int STAR = 0xFF2;
+    public static final int ALTERN = 0xFF3;
+    public static final int DOT = 0xFF7;
 
-    public static final int L_PAREN = 4;
-    public static final int R_PAREN = 5;
-    public static final int DOT = 6;
+    public static final int L_PAREN = 0xFF5;
+    public static final int R_PAREN = 0xFF6;
+    public static final int PROTECTION = 0xFF4;
 
     // ----- Attributes -----
 
