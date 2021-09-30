@@ -2,6 +2,8 @@ package egrep.main;
 
 import egrep.main.parser.RegExParser;
 
+import java.util.List;
+
 /**
  * The program entry point, welcome :)
  *
