@@ -9,7 +9,7 @@ import egrep.main.parser.RegExTree;
  *
  * @author Emilie SIAU
  * @author Hugo GUERRIER
- * @version 0.1
+ * @version 0.2
  */
 public class Main {
     public static void main(String[] args) {
