@@ -7,7 +7,7 @@ public class NodeId {
 
     // ----- Attributes -----
 
-    private Set<Integer> keys;
+    private final Set<Integer> keys;
 
     // ----- Constructors -----
 

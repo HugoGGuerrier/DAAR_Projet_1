@@ -22,7 +22,7 @@ public class Automaton {
     // ----- Attributes -----
 
     private Map<NodeId, ArrayList<List<NodeId>>> automaton;
-    private RegExTree tree;
+    private final RegExTree tree;
     private int nextNodeId;
     private boolean determinist;
 
@@ -278,6 +278,9 @@ public class Automaton {
         // Prepare the string builder
         StringBuilder res = new StringBuilder();
 
+        // Create a counter to avoid last \n
+        int nodeCpt = 0;
+
         // For every node, display the transition
         for(NodeId currNode : automaton.keySet()) {
             res.append(currNode.getKeys().toString()).append(" {");
@@ -316,7 +319,11 @@ public class Automaton {
 
             // Add the result to the general result
             res.append(transitionString);
-            res.append("}\n");
+            res.append("}");
+
+            // Add the new line
+            nodeCpt++;
+            if(nodeCpt < automaton.keySet().size()) res.append('\n');
         }
 
         // Return the result
