@@ -41,6 +41,29 @@ public class NodeId {
         return keys.equals(node.keys);
     }
 
+    @Override
+    public String toString() {
+        // Prepare the working vars
+        int cpt = 0;
+        StringBuilder res = new StringBuilder();
+
+        // For each element, add it to the result
+        for(Integer id : keys) {
+            if(cpt > 0) res.append(", ");
+            res.append(id);
+            cpt++;
+        }
+
+        // If there is more than one element, put some bracket
+        if(cpt > 1) {
+            res.insert(0, '{');
+            res.append('}');
+        }
+
+        // Return the result
+        return res.toString();
+    }
+
     // ----- Class methods -----
 
     public NodeId union(NodeId id) {

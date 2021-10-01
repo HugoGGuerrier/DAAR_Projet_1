@@ -1,5 +1,6 @@
 package egrep.test;
 
+import egrep.main.automaton.Automaton;
 import egrep.main.automaton.NodeId;
 import egrep.main.parser.RegExParser;
 import egrep.main.parser.RegExTree;
@@ -26,6 +27,6 @@ public class TestAutomaton {
     @Test
     void testAhoUllman() {
         RegExTree tree = RegExParser.exampleAhoUllman();
-        // TODO : la suite
+        // TODO : Suite
     }
 }

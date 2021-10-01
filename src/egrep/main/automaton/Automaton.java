@@ -2,10 +2,7 @@ package egrep.main.automaton;
 
 import egrep.main.parser.RegExTree;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static egrep.main.parser.RegExParser.*;
 
@@ -17,6 +14,7 @@ public class Automaton {
     // ----- Macros -----
 
     private static final int AUTOMATON_TABLE_SIZE = 259;
+    private static final int CHAR_NUMBER = 256;
     private static final int EPSILON_POS = 256;
     private static final int INIT_POS = 257;
     private static final int ACCEPT_POS = 258;
@@ -56,12 +54,15 @@ public class Automaton {
     public void create() throws Exception {
         // If the automaton is not created, create it
         if(automaton == null) {
+            // Instantiate the automaton
+            automaton = new HashMap<>();
+
             // Create the final node
             nextNodeId = 0;
             NodeId finalNode = getNextNodeId();
 
             // Set the final transitions
-            ArrayList<List<NodeId>> finalTransitions = new ArrayList<>(AUTOMATON_TABLE_SIZE);
+            ArrayList<List<NodeId>> finalTransitions = getNewTransitionList();
 
             // Set the final position to an empty linked list to represent the true
             finalTransitions.set(ACCEPT_POS, new LinkedList<>());
@@ -87,6 +88,19 @@ public class Automaton {
     private NodeId getNextNodeId() {
         NodeId res = new NodeId();
         res.addKey(nextNodeId++);
+        return res;
+    }
+
+    /**
+     * Create an return a new transition list
+     *
+     * @return The trnasition list with every transition to null
+     */
+    private ArrayList<List<NodeId>> getNewTransitionList() {
+        ArrayList<List<NodeId>> res = new ArrayList<>();
+        for(int i = 0 ; i < AUTOMATON_TABLE_SIZE ; i++) {
+            res.add(null);
+        }
         return res;
     }
 
@@ -123,7 +137,7 @@ public class Automaton {
                 rightNode = processNDFA(currTree.getSubTrees().get(1), finalNode);
 
                 // Create the node id list corresponding to the transitions of the current node
-                transitions = new ArrayList<>(AUTOMATON_TABLE_SIZE);
+                transitions = getNewTransitionList();
 
                 // Make epsilon transitions pointing the subtrees
                 epsilon = new LinkedList<>();
@@ -160,7 +174,7 @@ public class Automaton {
                 // --- ENTRY NODE:
 
                 // Create the node id list corresponding to the transitions of the entry node
-                transitions = new ArrayList<>(AUTOMATON_TABLE_SIZE);
+                transitions = getNewTransitionList();
 
                 // It has epsilon transitions to the loop entry node & the exit node
                 epsilon = new LinkedList<>();
@@ -174,7 +188,7 @@ public class Automaton {
                 // --- LOOP EXIT NODE:
 
                 // Create the node id list corresponding to the transitions of the loop exit node
-                transitions = new ArrayList<>(AUTOMATON_TABLE_SIZE);
+                transitions = getNewTransitionList();
 
                 // It has epsilon transitions to the loop entry node & the exit node
                 epsilon = new LinkedList<>();
@@ -188,7 +202,7 @@ public class Automaton {
                 // --- EXIT NODE:
 
                 // Create the node id list corresponding to the transitions of the exit node
-                transitions = new ArrayList<>(AUTOMATON_TABLE_SIZE);
+                transitions = getNewTransitionList();
 
                 // It has an epsilon transition to the final node
                 epsilon = new LinkedList<>();
@@ -204,14 +218,14 @@ public class Automaton {
                 nextNode = getNextNodeId();
 
                 // Create the next node transitions
-                nextTransitions = new ArrayList<>(AUTOMATON_TABLE_SIZE);
+                nextTransitions = getNewTransitionList();
                 epsilon = new LinkedList<>();
                 epsilon.add(finalNode);
                 nextTransitions.set(EPSILON_POS, epsilon);
 
                 // Set the node transitions
-                transitions = new ArrayList<>(AUTOMATON_TABLE_SIZE);
-                for(int i = 0 ; i < EPSILON_POS ; i++) {
+                transitions = getNewTransitionList();
+                for(int i = 0 ; i < CHAR_NUMBER ; i++) {
                     List<NodeId> currChar = new LinkedList<>();
                     currChar.add(nextNode);
                     transitions.set(i, currChar);
@@ -230,13 +244,13 @@ public class Automaton {
                 nextNode = getNextNodeId();
 
                 // Create the next node transitions
-                nextTransitions = new ArrayList<>(AUTOMATON_TABLE_SIZE);
+                nextTransitions = getNewTransitionList();
                 epsilon = new LinkedList<>();
                 epsilon.add(finalNode);
                 nextTransitions.set(EPSILON_POS, epsilon);
 
                 // Set the node transitions
-                transitions = new ArrayList<>(AUTOMATON_TABLE_SIZE);
+                transitions = getNewTransitionList();
                 List<NodeId> character = new LinkedList<>();
                 character.add(nextNode);
                 transitions.set(charIndex, character);
@@ -261,9 +275,52 @@ public class Automaton {
 
     @Override
     public String toString() {
+        // Prepare the string builder
+        StringBuilder res = new StringBuilder();
 
+        // For every node, display the transition
+        for(NodeId currNode : automaton.keySet()) {
+            res.append(currNode.getKeys().toString()).append(" {");
 
-        return null;
+            // Create the transitions string for all characters
+            StringBuilder transitionString = new StringBuilder();
+            int transCpt = 0;
+            for(int i = 0 ; i < CHAR_NUMBER ; i ++) {
+                List<NodeId> targets = automaton.get(currNode).get(i);
+                if(targets != null) {
+                    if(transCpt > 0) transitionString.append(", ");
+                    transitionString.append((char) i).append(" -> ").append(targets);
+                    transCpt++;
+                }
+            }
+
+            // Process the epsilon transition
+            List<NodeId> epsilonTargets = automaton.get(currNode).get(EPSILON_POS);
+            if(epsilonTargets != null) {
+                if(transCpt > 0) transitionString.append(", ");
+                transitionString.append("EPS -> ").append(epsilonTargets);
+                transCpt++;
+            }
+
+            // Process the init and accept
+            if(automaton.get(currNode).get(INIT_POS) != null) {
+                if(transCpt > 0) transitionString.append(", ");
+                transitionString.append("INIT = 1");
+                transCpt++;
+            }
+
+            if(automaton.get(currNode).get(ACCEPT_POS) != null) {
+                if(transCpt > 0) transitionString.append(", ");
+                transitionString.append("ACCEPT = 1");
+            }
+
+            // Add the result to the general result
+            res.append(transitionString);
+            res.append("}\n");
+        }
+
+        // Return the result
+        return res.toString();
     }
 
 }

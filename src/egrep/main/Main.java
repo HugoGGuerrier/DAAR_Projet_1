@@ -1,5 +1,6 @@
 package egrep.main;
 
+import egrep.main.automaton.Automaton;
 import egrep.main.parser.RegExParser;
 
 import java.util.List;
@@ -15,7 +16,15 @@ public class Main {
     public static void main(String[] args) {
         RegExParser parser = new RegExParser("a|bc*");
         try {
-            System.out.println(parser.parse());
+            
+            Automaton automaton = new Automaton(parser.parse());
+            try {
+                automaton.create();
+                System.out.println(automaton);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+
         } catch(Exception e) {
             e.printStackTrace();
         }
