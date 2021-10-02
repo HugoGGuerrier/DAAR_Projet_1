@@ -1,6 +1,7 @@
 package egrep.main.automaton;
 
 import egrep.main.parser.RegExTree;
+import egrep.main.utils.Pair;
 
 import java.util.*;
 
@@ -21,9 +22,12 @@ public class Automaton {
 
     // ----- Attributes -----
 
-    private Map<NodeId, ArrayList<List<NodeId>>> automaton;
     private final RegExTree tree;
+    private Map<NodeId, ArrayList<List<NodeId>>> automaton;
+    private NodeId initNode;
+    private NodeId ndfaFinalNode;
     private int nextNodeId;
+    private final List<Pair<Set<NodeId>, NodeId>> nodeIdInstances;
     private boolean determinist;
 
     // ----- Constructors -----
@@ -36,7 +40,10 @@ public class Automaton {
     public Automaton(RegExTree t) {
         tree = t;
         automaton = null;
+        initNode = null;
+        ndfaFinalNode = null;
         nextNodeId = 0;
+        nodeIdInstances = new LinkedList<>();
         determinist = false;
     }
 
@@ -138,6 +145,10 @@ public class Automaton {
 
             // Set the initial state, same as the final state
             automaton.get(initialNode).set(INIT_POS, new LinkedList<>());
+
+            // Save the initial and final node of the ndfa
+            initNode = initialNode;
+            ndfaFinalNode = finalNode;
         }
     }
 
@@ -146,7 +157,7 @@ public class Automaton {
      */
     public void createDFA() {
         if(!determinist) {
-            // TODO : Determine the automaton
+            processDFA();
 
             determinist = true;
         }
@@ -347,11 +358,128 @@ public class Automaton {
         return entryNode;
     }
 
+
+    /**
+     * Get the unique instance of node id for a given node id set
+     *
+     * @param nodeIdSet The node id set
+     * @return The instance of node id
+     */
+    private NodeId getNodeIdForSet(Set<NodeId> nodeIdSet) {
+        // Look for the node id instance
+        for(Pair<Set<NodeId>, NodeId> pair : nodeIdInstances) {
+            if(pair.getKey().equals(nodeIdSet)) return pair.getValue();
+        }
+
+        // If nothing was found, create it
+        Pair<Set<NodeId>, NodeId> newPair = new Pair<>(nodeIdSet, NodeId.fromCollection(nodeIdSet));
+        nodeIdInstances.add(newPair);
+        return newPair.getValue();
+    }
+
+    /**
+     * Get the epsilon closure for a wanted node id list
+     *
+     * @param nodeIdList The node id list to do the epsilon closure on
+     * @return The epsilon closure in a list
+     */
+    private Set<NodeId> getEpsilonClosure(List<NodeId> nodeIdList) {
+        // Prepare the result
+        Set<NodeId> res = new HashSet<>();
+
+        // Prepare the working list
+        List<NodeId> processList = new LinkedList<>(nodeIdList);
+
+        // Process the epsilon closure
+        while(!processList.isEmpty()) {
+            NodeId currentNode = processList.remove(0);
+            if(res.add(currentNode)) {
+                List<NodeId> epsilonTrans = automaton.get(currentNode).get(EPSILON_POS);
+                if(epsilonTrans != null) processList.addAll(epsilonTrans);
+            }
+        }
+
+        // Return the result
+        return res;
+    }
+
     /**
      * Determine the current automaton
      */
     private void processDFA() {
+        // Create the new map which contains the DFA
+        Map<NodeId, ArrayList<List<NodeId>>> dfa = new HashMap<>();
 
+        // Create the working variables
+        List<Set<NodeId>> processList = new LinkedList<>();
+
+        // Init process list by entering the ndfa from the init node
+        Set<NodeId> initSet = new HashSet<>();
+        initSet.add(initNode);
+        for(List<NodeId> targets : automaton.get(initNode)) {
+            if(targets != null) initSet.addAll(targets);
+        }
+
+        // Add the init list in the process list
+        processList.add(initSet);
+
+        // While the process list is not empty, do the process
+        while(!processList.isEmpty()) {
+            // Get the current list
+            Set<NodeId> currentSet = processList.remove(0);
+            NodeId currentNode = getNodeIdForSet(currentSet);
+
+            // If the node already exists in the dfa, pass the current list
+            if(dfa.getOrDefault(currentNode, null) == null) {
+
+                // Create the new transition list
+                ArrayList<List<NodeId>> newTransitions = getNewTransitionList();
+
+                // Add all targets from the sub nodes
+                for(NodeId subNode : currentSet) {
+                    for(int i = 0 ; i < CHAR_NUMBER ; i++) {
+                        List<NodeId> targets = automaton.get(subNode).get(i);
+                        if(targets != null) {
+                            if(newTransitions.get(i) == null) newTransitions.set(i, new LinkedList<>());
+                            newTransitions.get(i).addAll(targets);
+                        }
+                    }
+                }
+
+                // Do the epsilon closure for each transition
+                for(int i = 0 ; i < CHAR_NUMBER ; i++) {
+                    List<NodeId> newTargets = newTransitions.get(i);
+                    if(newTargets != null) {
+                        // Get the epsilon closure
+                        Set<NodeId> epsilon = getEpsilonClosure(newTargets);
+
+                        // Add the set to the process list
+                        processList.add(epsilon);
+
+                        // Set the transition
+                        newTargets.clear();
+                        newTargets.add(getNodeIdForSet(epsilon));
+                    }
+                }
+
+                // Set init and accept
+                if(currentNode.contains(initNode)) {
+                    newTransitions.set(INIT_POS, new LinkedList<>());
+                    initNode = currentNode;
+                }
+
+                if(currentNode.contains(ndfaFinalNode)) {
+                    newTransitions.set(ACCEPT_POS, new LinkedList<>());
+                }
+
+                // Add the new node and transitions to the dfa
+                dfa.put(currentNode, newTransitions);
+
+            }
+        }
+
+        // Affect the DFA to the automaton
+        automaton = dfa;
     }
 
 }

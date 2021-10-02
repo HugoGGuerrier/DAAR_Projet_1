@@ -1,6 +1,8 @@
 package egrep.main.automaton;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class NodeId {
@@ -66,10 +68,31 @@ public class NodeId {
 
     // ----- Class methods -----
 
-    public NodeId union(NodeId id) {
+    /**
+     * Get if a node id is contained in the current node id
+     *
+     * @return True if the node id is contained
+     */
+    public boolean contains(NodeId id) {
+        return keys.containsAll(id.keys);
+    }
+
+    /**
+     * Create a node id from a collection of other node id
+     *
+     * @param col The collection
+     * @return The new node id
+     */
+    public static NodeId fromCollection(Collection<NodeId> col) {
+        // Prepare the result
         NodeId res = new NodeId();
-        res.keys.addAll(keys);
-        res.keys.addAll(id.keys);
+
+        // For each node id, add all keys to the result
+        for(NodeId id : col) {
+            res.keys.addAll(id.keys);
+        }
+
+        // Return the result
         return res;
     }
 
