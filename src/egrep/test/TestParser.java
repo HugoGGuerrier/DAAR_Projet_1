@@ -35,17 +35,17 @@ public class TestParser {
             // Verify the tree structure
             assertEquals(RegExParser.ALTERN, tree.getRoot());
             assertEquals(2, tree.getSubTrees().size());
-            assertEquals((int) 'a', tree.getSubTrees().get(0).getRoot());
+            assertEquals('a', tree.getSubTrees().get(0).getRoot());
 
             RegExTree concat = tree.getSubTrees().get(1);
             assertEquals(2, concat.getSubTrees().size());
             assertEquals(RegExParser.CONCAT, concat.getRoot());
-            assertEquals((int) 'b', concat.getSubTrees().get(0).getRoot());
+            assertEquals('b', concat.getSubTrees().get(0).getRoot());
 
             RegExTree star = concat.getSubTrees().get(1);
             assertEquals(1, star.getSubTrees().size());
             assertEquals(RegExParser.STAR, star.getRoot());
-            assertEquals((int) 'c', star.getSubTrees().get(0).getRoot());
+            assertEquals('c', star.getSubTrees().get(0).getRoot());
 
         } catch(Exception e) {
             fail(e);
@@ -57,7 +57,24 @@ public class TestParser {
      */
     @Test
     void testConcat() {
+        // Define the regex and prepare the parser
+        String regex = "ab";
+        RegExParser parser = new RegExParser(regex);
 
+        try {
+
+            // Get the result tree
+            RegExTree tree = parser.parse();
+
+            // Test the tree
+            assertEquals(RegExParser.CONCAT, tree.getRoot());
+            assertEquals(2, tree.getSubTrees().size());
+            assertEquals('a', tree.getSubTrees().get(0).getRoot());
+            assertEquals('b', tree.getSubTrees().get(1).getRoot());
+
+        } catch(Exception e) {
+            fail(e);
+        }
     }
 
     /**
@@ -65,7 +82,22 @@ public class TestParser {
      */
     @Test
     void testDot() {
+        // Define the regex and prepare the parser
+        String regex = ".";
+        RegExParser parser = new RegExParser(regex);
 
+        try {
+
+            // Get the result tree
+            RegExTree tree = parser.parse();
+
+            // Test the tree
+            assertEquals(RegExParser.DOT, tree.getRoot());
+            assertEquals(0, tree.getSubTrees().size());
+
+        } catch(Exception e) {
+            fail(e);
+        }
     }
 
     /**
@@ -73,7 +105,23 @@ public class TestParser {
      */
     @Test
     void testStar() {
+        // Define the regex and prepare the parser
+        String regex = "a*";
+        RegExParser parser = new RegExParser(regex);
 
+        try {
+
+            // Get the result tree
+            RegExTree tree = parser.parse();
+
+            // Test the tree
+            assertEquals(RegExParser.STAR, tree.getRoot());
+            assertEquals(1, tree.getSubTrees().size());
+            assertEquals('a', tree.getSubTrees().get(0).getRoot());
+
+        } catch(Exception e) {
+            fail(e);
+        }
     }
 
     /**
@@ -81,7 +129,24 @@ public class TestParser {
      */
     @Test
     void testAltern() {
+        // Define the regex and prepare the parser
+        String regex = "a|b";
+        RegExParser parser = new RegExParser(regex);
 
+        try {
+
+            // Get the result tree
+            RegExTree tree = parser.parse();
+
+            // Test the tree
+            assertEquals(RegExParser.ALTERN, tree.getRoot());
+            assertEquals(2, tree.getSubTrees().size());
+            assertEquals('a', tree.getSubTrees().get(0).getRoot());
+            assertEquals('b', tree.getSubTrees().get(1).getRoot());
+
+        } catch(Exception e) {
+            fail(e);
+        }
     }
-    
+
 }
