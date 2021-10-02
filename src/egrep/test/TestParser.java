@@ -51,5 +51,37 @@ public class TestParser {
             fail(e);
         }
     }
- 
+
+    /**
+     * Test the concat symbol
+     */
+    @Test
+    void testConcat() {
+
+    }
+
+    /**
+     * Test the dot
+     */
+    @Test
+    void testDot() {
+
+    }
+
+    /**
+     * Test the star symbol
+     */
+    @Test
+    void testStar() {
+
+    }
+
+    /**
+     * Test the alter symbol
+     */
+    @Test
+    void testAltern() {
+
+    }
+    
 }

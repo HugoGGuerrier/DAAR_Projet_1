@@ -1,6 +1,7 @@
 # Exclude for ant
 egrep.jar
 build
+bin
 
 # Exclude for ItelliJ
 out
