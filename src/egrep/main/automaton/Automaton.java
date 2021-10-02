@@ -40,19 +40,84 @@ public class Automaton {
         determinist = false;
     }
 
-    // ----- Getters -----
+    // ----- Override methods -----
 
-    public Map<NodeId, ArrayList<List<NodeId>>> getAutomaton() {
-        return automaton;
+    @Override
+    public String toString() {
+        // Prepare the string builder
+        StringBuilder res = new StringBuilder();
+
+        // Create a counter to avoid last \n
+        int nodeCpt = 0;
+
+        // For every node, display the transition
+        for(NodeId currNode : automaton.keySet()) {
+            res.append(currNode.getKeys().toString()).append(" {");
+
+            // Create the transitions string for all characters
+            StringBuilder transitionString = new StringBuilder();
+            int transCpt = 0;
+            for(int i = 0 ; i < CHAR_NUMBER ; i ++) {
+                List<NodeId> targets = automaton.get(currNode).get(i);
+                if(targets != null) {
+                    if(transCpt > 0) transitionString.append(", ");
+                    transitionString.append((char) i).append(" -> ").append(targets);
+                    transCpt++;
+                }
+            }
+
+            // Process the epsilon transition
+            List<NodeId> epsilonTargets = automaton.get(currNode).get(EPSILON_POS);
+            if(epsilonTargets != null) {
+                if(transCpt > 0) transitionString.append(", ");
+                transitionString.append("EPS -> ").append(epsilonTargets);
+                transCpt++;
+            }
+
+            // Process the init and accept
+            if(automaton.get(currNode).get(INIT_POS) != null) {
+                if(transCpt > 0) transitionString.append(", ");
+                transitionString.append("INIT = 1");
+                transCpt++;
+            }
+
+            if(automaton.get(currNode).get(ACCEPT_POS) != null) {
+                if(transCpt > 0) transitionString.append(", ");
+                transitionString.append("ACCEPT = 1");
+            }
+
+            // Add the result to the general result
+            res.append(transitionString);
+            res.append("}");
+
+            // Add the new line
+            nodeCpt++;
+            if(nodeCpt < automaton.keySet().size()) res.append('\n');
+        }
+
+        // Return the result
+        return res.toString();
     }
 
     // ----- Class methods -----
 
     /**
-     * Create the automaton
+     * Create the full automaton
+     *
+     * @throws Exception If there is an exception during the automaton creation
      */
     public void create() throws Exception {
-        // If the automaton is not created, create it
+        createNDFA();
+        createDFA();
+    }
+
+    /**
+     * Create the Non-Deterministic Finite Automaton for the provided regex tree
+     *
+     * @throws Exception If there is an exception during the automaton creation
+     */
+    public void createNDFA() throws Exception {
+        // Verify that the automaton is not already created
         if(automaton == null) {
             // Instantiate the automaton
             automaton = new HashMap<>();
@@ -74,11 +139,29 @@ public class Automaton {
             // Set the initial state, same as the final state
             automaton.get(initialNode).set(INIT_POS, new LinkedList<>());
         }
+    }
 
+    /**
+     * Determine the non-deterministic automaton
+     */
+    public void createDFA() {
         if(!determinist) {
             // TODO : Determine the automaton
+
+            determinist = true;
         }
     }
+
+    /**
+     * Reset the automaton by removing all state and transitions
+     */
+    public void reset() {
+        automaton = null;
+        determinist = false;
+        nextNodeId = 0;
+    }
+
+    // ----- Internal methods -----
 
     /**
      * Get the next node id
@@ -269,65 +352,6 @@ public class Automaton {
      */
     private void processDFA() {
 
-    }
-
-    // ----- Override methods -----
-
-    @Override
-    public String toString() {
-        // Prepare the string builder
-        StringBuilder res = new StringBuilder();
-
-        // Create a counter to avoid last \n
-        int nodeCpt = 0;
-
-        // For every node, display the transition
-        for(NodeId currNode : automaton.keySet()) {
-            res.append(currNode.getKeys().toString()).append(" {");
-
-            // Create the transitions string for all characters
-            StringBuilder transitionString = new StringBuilder();
-            int transCpt = 0;
-            for(int i = 0 ; i < CHAR_NUMBER ; i ++) {
-                List<NodeId> targets = automaton.get(currNode).get(i);
-                if(targets != null) {
-                    if(transCpt > 0) transitionString.append(", ");
-                    transitionString.append((char) i).append(" -> ").append(targets);
-                    transCpt++;
-                }
-            }
-
-            // Process the epsilon transition
-            List<NodeId> epsilonTargets = automaton.get(currNode).get(EPSILON_POS);
-            if(epsilonTargets != null) {
-                if(transCpt > 0) transitionString.append(", ");
-                transitionString.append("EPS -> ").append(epsilonTargets);
-                transCpt++;
-            }
-
-            // Process the init and accept
-            if(automaton.get(currNode).get(INIT_POS) != null) {
-                if(transCpt > 0) transitionString.append(", ");
-                transitionString.append("INIT = 1");
-                transCpt++;
-            }
-
-            if(automaton.get(currNode).get(ACCEPT_POS) != null) {
-                if(transCpt > 0) transitionString.append(", ");
-                transitionString.append("ACCEPT = 1");
-            }
-
-            // Add the result to the general result
-            res.append(transitionString);
-            res.append("}");
-
-            // Add the new line
-            nodeCpt++;
-            if(nodeCpt < automaton.keySet().size()) res.append('\n');
-        }
-
-        // Return the result
-        return res.toString();
     }
 
 }
