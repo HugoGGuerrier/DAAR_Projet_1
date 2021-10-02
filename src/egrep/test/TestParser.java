@@ -35,7 +35,17 @@ public class TestParser {
             // Verify the tree structure
             assertEquals(RegExParser.ALTERN, tree.getRoot());
             assertEquals(2, tree.getSubTrees().size());
+            assertEquals((int) 'a', tree.getSubTrees().get(0).getRoot());
 
+            RegExTree concat = tree.getSubTrees().get(1);
+            assertEquals(2, concat.getSubTrees().size());
+            assertEquals(RegExParser.CONCAT, concat.getRoot());
+            assertEquals((int) 'b', concat.getSubTrees().get(0).getRoot());
+
+            RegExTree star = concat.getSubTrees().get(1);
+            assertEquals(1, star.getSubTrees().size());
+            assertEquals(RegExParser.STAR, star.getRoot());
+            assertEquals((int) 'c', star.getSubTrees().get(0).getRoot());
 
         } catch(Exception e) {
             fail(e);
