@@ -157,8 +157,11 @@ public class Automaton {
      */
     public void createDFA() {
         if(!determinist) {
+            // Reset the counter and process the automaton
+            nextNodeId = 0;
             processDFA();
 
+            // Set the automaton determinist
             determinist = true;
         }
     }
@@ -168,6 +171,9 @@ public class Automaton {
      */
     public void reset() {
         automaton = null;
+        initNode = null;
+        ndfaFinalNode = null;
+        nodeIdInstances.clear();
         determinist = false;
         nextNodeId = 0;
     }
@@ -404,7 +410,7 @@ public class Automaton {
     }
 
     /**
-     * Determine the current automaton
+     * Determine the current automaton using an alternate version of the sub-set method from Aho Ullman book
      */
     private void processDFA() {
         // Create the new map which contains the DFA

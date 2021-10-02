@@ -40,7 +40,7 @@ public class Main {
                 long autoEndTime = System.currentTimeMillis();
 
                 System.out.println(automaton);
-                System.out.println("Non-Deterministic Automaton creation duration : " + (autoEndTime - autoStartTime) + "ms");
+                System.out.println("Non-Deterministic Automaton creation duration : " + (autoEndTime - autoStartTime) + "ms\n");
 
                 // Create and display the DFA
                 long deterAutoStartTime = System.currentTimeMillis();
