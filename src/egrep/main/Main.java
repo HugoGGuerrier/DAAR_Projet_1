@@ -30,14 +30,26 @@ public class Main {
             System.out.println("Parsing duration : " + (parseEndTime - parseStartTime) + "ms\n");
 
             try {
+
+                // Prepare the automaton for the regex tree
                 Automaton automaton = new Automaton(tree);
 
+                // Create the display the NDFA
                 long autoStartTime = System.currentTimeMillis();
-                automaton.create();
+                automaton.createNDFA();
                 long autoEndTime = System.currentTimeMillis();
 
                 System.out.println(automaton);
-                System.out.println("Automaton creation duration : " + (autoEndTime - autoStartTime) + "ms");
+                System.out.println("Non-Deterministic Automaton creation duration : " + (autoEndTime - autoStartTime) + "ms");
+
+                // Create and display the DFA
+                long deterAutoStartTime = System.currentTimeMillis();
+                automaton.createDFA();
+                long deterAutoEndTime = System.currentTimeMillis();
+
+                System.out.println(automaton);
+                System.out.println("Deterministic Automaton creation duration : " + (deterAutoEndTime - deterAutoStartTime) + "ms");
+
             } catch(Exception e) {
                 e.printStackTrace();
             }
