@@ -13,8 +13,8 @@ Version : 0.2
 * Compiler : `ant build`
 * Tester : `ant test` (Si une erreur survient : `ant test -lib lib`)
 * Créer un jar : `ant jar`
-* Exécuter : `ant run` ou `java -jar egrep.jar`
 * Nettoyer : `ant clean`
+* Exécuter le programme et afficher l'aide `java -jar bin/egrep.jar -h`
 
 ## A faire :
 

@@ -36,10 +36,6 @@
         </jar>
     </target>
 
-    <target name="run" depends="jar" description="Run the jar file">
-        <java fork="true" jar="${jar_file}" />
-    </target>
-
     <target name="test" depends="build" description="Start all unit tests">
         <junitlauncher printsummary="true">
             <classpath refid="class_path" />
