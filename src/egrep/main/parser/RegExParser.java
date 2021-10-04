@@ -1,5 +1,7 @@
 package egrep.main.parser;
 
+import egrep.main.exceptions.ParsingException;
+
 import java.util.ArrayList;
 
 import java.lang.Exception;
@@ -67,9 +69,9 @@ public class RegExParser {
      * Start the parsing process and return the result
      *
      * @return The regex tree
-     * @throws Exception If there is an error during the parsing process
+     * @throws ParsingException If there is an error during the parsing process
      */
-    public RegExTree parse() throws Exception {
+    public RegExTree parse() throws ParsingException {
         // Avoid parsing repetition
         if(parseResult != null) {
             return parseResult;
@@ -102,7 +104,7 @@ public class RegExParser {
         return c;
     }
 
-    private RegExTree parse(ArrayList<RegExTree> result) throws Exception {
+    private RegExTree parse(ArrayList<RegExTree> result) throws ParsingException {
         // Process all special chars
         while (containsParenthesis(result)) result= processParenthesis(result);
         while (containsStar(result)) result= processStar(result);
@@ -111,7 +113,7 @@ public class RegExParser {
 
         // Verify that the result doesn't have multiple root
         if (result.size() > 1) {
-            throw new Exception("Multiple root tree is impossible");
+            throw new ParsingException("Multiple root tree is impossible");
         }
 
         // Return the result removing the protection
@@ -130,7 +132,7 @@ public class RegExParser {
         return false;
     }
 
-    private ArrayList<RegExTree> processParenthesis(ArrayList<RegExTree> trees) throws Exception {
+    private ArrayList<RegExTree> processParenthesis(ArrayList<RegExTree> trees) throws ParsingException {
         // Prepare the result
         ArrayList<RegExTree> result = new ArrayList<>();
 
@@ -158,7 +160,7 @@ public class RegExParser {
 
                 // If there is not left parenthesis throw an exception
                 if (!done) {
-                    throw new Exception("Error during parsing : missing '(' parenthesis");
+                    throw new ParsingException("Error during parsing : missing '(' parenthesis");
                 }
 
                 // We found the parent content, lets parse it !
@@ -174,7 +176,7 @@ public class RegExParser {
 
         // Throw exception if there is a missing parenthesis
         if (!found) {
-            throw new Exception("Error during parsing : missing ')' parenthesis");
+            throw new ParsingException("Error during parsing : missing ')' parenthesis");
         }
 
         // Return the parsing result
@@ -193,7 +195,7 @@ public class RegExParser {
         return false;
     }
 
-    private ArrayList<RegExTree> processStar(ArrayList<RegExTree> trees) throws Exception {
+    private ArrayList<RegExTree> processStar(ArrayList<RegExTree> trees) throws ParsingException {
         // Prepare the result
         ArrayList<RegExTree> result = new ArrayList<>();
 
@@ -205,7 +207,7 @@ public class RegExParser {
 
                 // If there is no char for * , throw an exception
                 if (result.isEmpty()) {
-                    throw new Exception("Error during parsing : '*' need a character");
+                    throw new ParsingException("Error during parsing : '*' need a character");
                 }
 
                 // We found it, let's add the result
@@ -289,7 +291,7 @@ public class RegExParser {
         return false;
     }
 
-    private ArrayList<RegExTree> processAltern(ArrayList<RegExTree> trees) throws Exception {
+    private ArrayList<RegExTree> processAltern(ArrayList<RegExTree> trees) throws ParsingException {
         // Prepare the result
         ArrayList<RegExTree> result = new ArrayList<>();
 
@@ -302,7 +304,7 @@ public class RegExParser {
             if (!found && t.getRoot() == ALTERN && t.getSubTrees().isEmpty()) {
                 // If there is no left altern part throw an exception
                 if (result.isEmpty()) {
-                    throw new Exception("Error during parsing : missing '|' left part");
+                    throw new ParsingException("Error during parsing : missing '|' left part");
                 }
 
                 // Found the altern symbol, get the left part
@@ -311,7 +313,7 @@ public class RegExParser {
             } else if (found && !done) {
                 // If there is no left part, throw an exception
                 if (gauche==null) {
-                    throw new Exception("Error during parsing : missing '|' left part");
+                    throw new ParsingException("Error during parsing : missing '|' left part");
                 }
 
                 // Found the altern symbol so get the right part
@@ -329,10 +331,10 @@ public class RegExParser {
         return result;
     }
 
-    private RegExTree removeProtection(RegExTree tree) throws Exception {
+    private RegExTree removeProtection(RegExTree tree) throws ParsingException {
         // If the tree is a protection and there is more than 1 child
         if (tree.getRoot() == PROTECTION && tree.getSubTrees().size() != 1) {
-            throw new Exception("Error during parsing : protection with more than 1 child");
+            throw new ParsingException("Error during parsing : protection with more than 1 child");
         }
 
         // If the subtree is empty, just return it

@@ -1,8 +1,12 @@
 package egrep.main.automaton;
 
+import egrep.main.exceptions.AutomatonException;
+import egrep.main.exceptions.CharacterException;
+import egrep.main.exceptions.RegexMatchingException;
 import egrep.main.parser.RegExTree;
 import egrep.main.utils.Pair;
 
+import java.nio.charset.CharacterCodingException;
 import java.util.*;
 
 import static egrep.main.parser.RegExParser.*;
@@ -23,10 +27,16 @@ public class Automaton {
 
     // ----- Attributes -----
 
+    // --- Data attributes
     private final RegExTree tree;
+
+    // --- Attributes about the automaton
     private Map<NodeId, ArrayList<List<NodeId>>> automaton;
     private NodeId initNode;
     private NodeId ndfaFinalNode;
+    private NodeId currentNode;
+
+    // --- Utils attributes
     private int nextNodeId;
     private final List<Pair<Set<NodeId>, NodeId>> nodeIdInstances;
     private boolean determinist;
@@ -34,12 +44,12 @@ public class Automaton {
     // ----- Constructors -----
 
     /**
-     * Create a new automaton from the regex tree and automatically process it
+     * Create a new automaton from the regex tree and automatically process it to a DFA
      *
      * @param tree The tree to create the automaton from
-     * @throws Exception if the passed tree is null
+     * @throws AutomatonException if the passed tree is null
      */
-    public Automaton(RegExTree tree) throws Exception {
+    public Automaton(RegExTree tree) throws AutomatonException {
         this(tree, true);
     }
 
@@ -48,13 +58,14 @@ public class Automaton {
      *
      * @param t The regex tree
      * @param autoCreate Create automatically the automaton or not (for benchmarking purpose)
-     * @throws Exception if the passed tree is null
+     * @throws AutomatonException if the passed tree is null
      */
-    public Automaton(RegExTree t, boolean autoCreate) throws Exception {
+    public Automaton(RegExTree t, boolean autoCreate) throws AutomatonException {
         tree = t;
         automaton = null;
         initNode = null;
         ndfaFinalNode = null;
+        currentNode = null;
         nextNodeId = 0;
         nodeIdInstances = new LinkedList<>();
         determinist = false;
@@ -134,9 +145,9 @@ public class Automaton {
     /**
      * Create the full automaton
      *
-     * @throws Exception If there is an exception during the automaton creation
+     * @throws AutomatonException If there is an exception during the automaton creation
      */
-    public void create() throws Exception {
+    public void create() throws AutomatonException {
         createNDFA();
         createDFA();
     }
@@ -144,9 +155,9 @@ public class Automaton {
     /**
      * Create id needed the Non-Deterministic Finite Automaton for the provided regex tree
      *
-     * @throws Exception If there is an exception during the automaton creation
+     * @throws AutomatonException If there is an exception during the automaton creation
      */
-    public void createNDFA() throws Exception {
+    public void createNDFA() throws AutomatonException {
         // Verify that the automaton is not already created
         if(automaton == null) {
             // Instantiate the automaton
@@ -184,8 +195,57 @@ public class Automaton {
             nextNodeId = 0;
             processDFA();
 
-            // Set the automaton determinist
+            // Set the automaton determinist and init it for the input
             determinist = true;
+            currentNode = initNode;
+        }
+    }
+
+    /**
+     * Input a character in the automaton
+     *
+     * @param c The character to input
+     * @return True if the automaton is in a final state after the input
+     * @throws RegexMatchingException If the input cannot match the automaton
+     * @throws AutomatonException If the automaton is not deterministic
+     * @throws CharacterException If the character is not in the ASCII table
+     */
+    public boolean input(char c) throws RegexMatchingException, AutomatonException, CharacterException {
+        // Test for the input in the automaton
+        if(determinist) {
+            if((int) c <= CHAR_NUMBER) {
+
+                List<NodeId> nextNode = automaton.get(currentNode).get(c);
+                List<NodeId> dotNode = automaton.get(currentNode).get(DOT_POS);
+                if(nextNode != null) {
+                    currentNode = nextNode.get(0);
+                } else if(dotNode != null) {
+                    currentNode = dotNode.get(0);
+                } else {
+                    throw new RegexMatchingException("Cannot match the input");
+                }
+
+            } else {
+                throw new CharacterException("The input character need to be conform to the ASCII standard");
+            }
+        } else {
+            throw new AutomatonException("The automaton need to be deterministic");
+        }
+
+        // Return if the automaton is in a final state
+        return automaton.get(currentNode).get(ACCEPT_POS) != null;
+    }
+
+    /**
+     * Reset the automaton from the inputs
+     *
+     * @throws AutomatonException If the automaton is not deterministic
+     */
+    public void reset() throws AutomatonException {
+        if(determinist) {
+            currentNode = initNode;
+        } else {
+            throw new AutomatonException("The automaton need to be deterministic");
         }
     }
 
@@ -221,12 +281,12 @@ public class Automaton {
      * @param currTree The current tree to process recursively
      * @param finalNode The node where to go to
      * @return The initial node id of the created automaton
-     * @throws Exception If the passed tree is null
+     * @throws AutomatonException If the passed tree is null
      */
-    private NodeId processNDFA(RegExTree currTree, NodeId finalNode) throws Exception {
+    private NodeId processNDFA(RegExTree currTree, NodeId finalNode) throws AutomatonException {
         // If the current tree is null, throw an exception
         if(currTree == null) {
-            throw new Exception("Error during automaton creation : null tree cannot be proccess");
+            throw new AutomatonException("Error during automaton creation : null tree cannot be proccess");
         }
 
         // Prepare the node id to return
@@ -496,12 +556,13 @@ public class Automaton {
                     newDotTargets.add(getNodeIdForSet(epsilon));
                 }
 
-                // Set init and accept
+                // If the new node contains the init node, make it init
                 if(currentSet.contains(initNode)) {
                     newTransitions.set(INIT_POS, new LinkedList<>());
                     initNode = currentNode;
                 }
 
+                // If the new node contains the NDFA finale node, make it final
                 if(currentSet.contains(ndfaFinalNode)) {
                     newTransitions.set(ACCEPT_POS, new LinkedList<>());
                 }

@@ -3,6 +3,7 @@ package egrep.main;
 import egrep.main.automaton.Automaton;
 import egrep.main.parser.RegExParser;
 import egrep.main.parser.RegExTree;
+import egrep.main.search_engine.NaiveStrategy;
 
 /**
  * The program entry point, welcome :)
@@ -14,7 +15,7 @@ import egrep.main.parser.RegExTree;
 public class Main {
     public static void main(String[] args) {
         // Define and print the regex string
-        String regex = "a|bc*";
+        String regex = "couu*couu*";
         System.out.println("The regex : " + regex + "\n");
 
         try {
@@ -29,30 +30,24 @@ public class Main {
             System.out.println("The parsing result : " + tree.toString());
             System.out.println("Parsing duration : " + (parseEndTime - parseStartTime) + "ms\n");
 
-            try {
+            // Prepare the automaton for the regex tree
+            Automaton automaton = new Automaton(tree, false);
 
-                // Prepare the automaton for the regex tree
-                Automaton automaton = new Automaton(tree, false);
+            // Create the display the NDFA
+            long autoStartTime = System.currentTimeMillis();
+            automaton.createNDFA();
+            long autoEndTime = System.currentTimeMillis();
 
-                // Create the display the NDFA
-                long autoStartTime = System.currentTimeMillis();
-                automaton.createNDFA();
-                long autoEndTime = System.currentTimeMillis();
+            System.out.println(automaton);
+            System.out.println("Non-Deterministic Automaton creation duration : " + (autoEndTime - autoStartTime) + "ms\n");
 
-                System.out.println(automaton);
-                System.out.println("Non-Deterministic Automaton creation duration : " + (autoEndTime - autoStartTime) + "ms\n");
+            // Create and display the DFA
+            long deterAutoStartTime = System.currentTimeMillis();
+            automaton.createDFA();
+            long deterAutoEndTime = System.currentTimeMillis();
 
-                // Create and display the DFA
-                long deterAutoStartTime = System.currentTimeMillis();
-                automaton.createDFA();
-                long deterAutoEndTime = System.currentTimeMillis();
-
-                System.out.println(automaton);
-                System.out.println("Deterministic Automaton creation duration : " + (deterAutoEndTime - deterAutoStartTime) + "ms");
-
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
+            System.out.println(automaton);
+            System.out.println("Deterministic Automaton creation duration : " + (deterAutoEndTime - deterAutoStartTime) + "ms\n");
 
         } catch(Exception e) {
             e.printStackTrace();

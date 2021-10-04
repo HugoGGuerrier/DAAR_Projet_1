@@ -1,6 +1,8 @@
 package egrep.main.search_engine;
 
 import egrep.main.automaton.Automaton;
+import egrep.main.exceptions.AutomatonException;
+import egrep.main.exceptions.ParsingException;
 import egrep.main.parser.RegExParser;
 import egrep.main.utils.Pair;
 
@@ -26,7 +28,7 @@ public class SearchEngine {
      * @param fileRelativePath The input file
      * @throws Exception If the regex is not correct
      */
-    public SearchEngine(String regex, String fileRelativePath) throws Exception {
+    public SearchEngine(String regex, String fileRelativePath) throws AutomatonException, ParsingException {
         this(regex, fileRelativePath, new NaiveStrategy());
     }
 
@@ -38,7 +40,7 @@ public class SearchEngine {
      * @param strat The search strategy
      * @throws Exception If the regex is not correct
      */
-    public SearchEngine(String regex, String fileRelativePath, SearchStrategy strat) throws Exception {
+    public SearchEngine(String regex, String fileRelativePath, SearchStrategy strat) throws AutomatonException, ParsingException {
         // Set the attributes
         this.regex = regex;
         inputFile = new File(fileRelativePath);

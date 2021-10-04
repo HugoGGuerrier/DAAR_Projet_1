@@ -10,12 +10,13 @@
 * NodeId : représente l'identifiant d'un noeud. Permet de manipuler plus facilement l'automate quand on le construit. C'est un Set de numéros de noeuds.
 * Algorithme de création de l'automate qui est un simple parcours de l'arbre donc algo O(n)
 * Utilisation d'une fonction de la forme "processNDFA(tree, final) -> NodeId" qui permet de construire l'automate de manière récursive
+* Représentation du caractère universel avec une case spéciale dans l'automate
 
 ### La création du DFA
-* L'étape de détermination de l'algorithme utilise une version modifié de l'algo vu en cours
+* L'étape de détermination de l'algorithme utilise une version modifiée de l'algo vu en cours (sub-set)
 * On créé un nouvel automate pour éviter de dégrader l'ancien et de perdre des données
 * Tous les états d'un automates fini sont accessibles à partir de l'état initial (axiome)
-* Utilisation d'une structure "(ensemble, NodeId)" pour associer à chaque ensemble une instance précise de NodeId
+* Utilisation d'une structure de paire "(ensemble, NodeId)" pour associer à chaque ensemble une instance précise de NodeId
 * Simple liste de travail qui se vide et se rempli de manière dynamique
 * Algorithme parcourant tous les noeud
 
@@ -23,7 +24,6 @@
 * Utilisation du design pattern Strategy pour l'implémentation
 * Première implémentation : la recherche naïve
 * Deuxième implémentation : KMP
-
 
 ## Tests
 * Tests unitaires sur le parser pour vérifier la véracité du nouveau parser
