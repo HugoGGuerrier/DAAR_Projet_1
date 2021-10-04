@@ -34,11 +34,23 @@ public class Automaton {
     // ----- Constructors -----
 
     /**
+     * Create a new automaton from the regex tree and automatically process it
+     *
+     * @param tree The tree to create the automaton from
+     * @throws Exception if the passed tree is null
+     */
+    public Automaton(RegExTree tree) throws Exception {
+        this(tree, true);
+    }
+
+    /**
      * Init an automaton with the wanted regex tree
      *
      * @param t The regex tree
+     * @param autoCreate Create automatically the automaton or not (for benchmarking purpose)
+     * @throws Exception if the passed tree is null
      */
-    public Automaton(RegExTree t) {
+    public Automaton(RegExTree t, boolean autoCreate) throws Exception {
         tree = t;
         automaton = null;
         initNode = null;
@@ -46,6 +58,8 @@ public class Automaton {
         nextNodeId = 0;
         nodeIdInstances = new LinkedList<>();
         determinist = false;
+
+        if(autoCreate) create();
     }
 
     // ----- Override methods -----
@@ -128,7 +142,7 @@ public class Automaton {
     }
 
     /**
-     * Create the Non-Deterministic Finite Automaton for the provided regex tree
+     * Create id needed the Non-Deterministic Finite Automaton for the provided regex tree
      *
      * @throws Exception If there is an exception during the automaton creation
      */
@@ -162,7 +176,7 @@ public class Automaton {
     }
 
     /**
-     * Determine the non-deterministic automaton
+     * Determine if needed the non-deterministic automaton
      */
     public void createDFA() {
         if(!determinist) {
@@ -173,18 +187,6 @@ public class Automaton {
             // Set the automaton determinist
             determinist = true;
         }
-    }
-
-    /**
-     * Reset the automaton by removing all state and transitions
-     */
-    public void reset() {
-        automaton = null;
-        initNode = null;
-        ndfaFinalNode = null;
-        nodeIdInstances.clear();
-        determinist = false;
-        nextNodeId = 0;
     }
 
     // ----- Internal methods -----

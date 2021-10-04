@@ -9,7 +9,7 @@ import egrep.main.parser.RegExTree;
  *
  * @author Emilie SIAU
  * @author Hugo GUERRIER
- * @version 0.2
+ * @version 0.3
  */
 public class Main {
     public static void main(String[] args) {
@@ -32,7 +32,7 @@ public class Main {
             try {
 
                 // Prepare the automaton for the regex tree
-                Automaton automaton = new Automaton(tree);
+                Automaton automaton = new Automaton(tree, false);
 
                 // Create the display the NDFA
                 long autoStartTime = System.currentTimeMillis();
