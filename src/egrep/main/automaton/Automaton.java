@@ -12,7 +12,11 @@ import java.util.*;
 import static egrep.main.parser.RegExParser.*;
 
 /**
+ * This class is the regex searching automaton
  * An automaton is represented by a Map of keys:NodeId and values:[260 NodeId]
+ *
+ * @author Emilie SIAU
+ * @author Hugo GUERRIER
  */
 public class Automaton {
 

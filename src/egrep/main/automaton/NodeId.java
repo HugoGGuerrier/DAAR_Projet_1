@@ -2,9 +2,14 @@ package egrep.main.automaton;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+/**
+ * This class represent a node id for the regex automaton
+ *
+ * @author Emilie SIAU
+ * @author Hugo GUERRIER
+ */
 public class NodeId {
 
     // ----- Attributes -----

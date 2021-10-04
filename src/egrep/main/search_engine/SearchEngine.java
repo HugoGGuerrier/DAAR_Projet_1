@@ -9,6 +9,12 @@ import egrep.main.utils.Pair;
 import java.io.File;
 import java.util.List;
 
+/**
+ * This class represents a search engine for a file
+ *
+ * @author Emilie SIAU
+ * @author Hugo GUERRIER
+ */
 public class SearchEngine {
 
     // ----- Attributes -----
@@ -26,9 +32,9 @@ public class SearchEngine {
      *
      * @param regex The regular expression
      * @param fileRelativePath The input file
-     * @throws Exception If the regex is not correct
+     * @throws ParsingException If the regex is not correct
      */
-    public SearchEngine(String regex, String fileRelativePath) throws AutomatonException, ParsingException {
+    public SearchEngine(String regex, String fileRelativePath) throws ParsingException {
         this(regex, fileRelativePath, new NaiveStrategy());
     }
 
@@ -38,9 +44,9 @@ public class SearchEngine {
      * @param regex The regex
      * @param fileRelativePath The input file relative path
      * @param strat The search strategy
-     * @throws Exception If the regex is not correct
+     * @throws ParsingException If the regex is not correct
      */
-    public SearchEngine(String regex, String fileRelativePath, SearchStrategy strat) throws AutomatonException, ParsingException {
+    public SearchEngine(String regex, String fileRelativePath, SearchStrategy strat) throws ParsingException {
         // Set the attributes
         this.regex = regex;
         inputFile = new File(fileRelativePath);
@@ -48,7 +54,12 @@ public class SearchEngine {
 
         // Create the automaton
         RegExParser parser = new RegExParser(regex);
-        automaton = new Automaton(parser.parse());
+        try {
+            automaton = new Automaton(parser.parse());
+        } catch (AutomatonException e) {
+            System.err.println("This CANNOT happen");
+            e.printStackTrace();
+        }
     }
 
     // ----- Class methods -----

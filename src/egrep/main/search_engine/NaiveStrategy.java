@@ -5,11 +5,13 @@ import egrep.main.exceptions.AutomatonException;
 import egrep.main.exceptions.CharacterException;
 import egrep.main.exceptions.RegexMatchingException;
 
+/**
+ * This class implements the naive regex search
+ *
+ * @author Emilie SIAU
+ * @author Hugo GUERRIER
+ */
 public class NaiveStrategy implements SearchStrategy {
-
-    // ----- Attributes -----
-
-    // ----- Constructors -----
 
     // ----- Override methods -----
 

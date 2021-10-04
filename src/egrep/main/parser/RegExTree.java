@@ -2,6 +2,12 @@ package egrep.main.parser;
 
 import java.util.ArrayList;
 
+/**
+ * This class represent a regular expression tree
+ *
+ * @author Emilie SIAU
+ * @author Hugo GUERRIER
+ */
 public class RegExTree {
 
     // ----- Attributes -----

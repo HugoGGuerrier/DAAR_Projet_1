@@ -10,7 +10,7 @@ import egrep.main.search_engine.NaiveStrategy;
  *
  * @author Emilie SIAU
  * @author Hugo GUERRIER
- * @version 0.3
+ * @version 0.4
  */
 public class Main {
     public static void main(String[] args) {
