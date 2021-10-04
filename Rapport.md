@@ -40,4 +40,3 @@
 ## Idées d'améliorations
 * Faire hériter Automaton de la classe Map pour une implémentation plus élégante
 * Rajouter les parties manquante des e-regex
-* Utiliser une transition spéciale pour le "."

@@ -8,17 +8,18 @@ import java.util.*;
 import static egrep.main.parser.RegExParser.*;
 
 /**
- * An automaton is represented by a Map of keys:NodeId and values:[259 NodeId]
+ * An automaton is represented by a Map of keys:NodeId and values:[260 NodeId]
  */
 public class Automaton {
 
     // ----- Macros -----
 
-    private static final int AUTOMATON_TABLE_SIZE = 259;
+    private static final int AUTOMATON_TABLE_SIZE = 260;
     private static final int CHAR_NUMBER = 256;
-    private static final int EPSILON_POS = 256;
-    private static final int INIT_POS = 257;
-    private static final int ACCEPT_POS = 258;
+    private static final int DOT_POS = 256;
+    private static final int EPSILON_POS = 257;
+    private static final int INIT_POS = 258;
+    private static final int ACCEPT_POS = 259;
 
     // ----- Attributes -----
 
@@ -71,6 +72,14 @@ public class Automaton {
                     transitionString.append((char) i).append(" -> ").append(targets);
                     transCpt++;
                 }
+            }
+
+            // Process the dot transtion
+            List<NodeId> dotTargets = automaton.get(currNode).get(DOT_POS);
+            if(dotTargets != null) {
+                if(transCpt > 0) transitionString.append(", ");
+                transitionString.append("DOT -> ").append(dotTargets);
+                transCpt++;
             }
 
             // Process the epsilon transition
@@ -325,11 +334,9 @@ public class Automaton {
 
                 // Set the node transitions
                 transitions = getNewTransitionList();
-                for(int i = 0 ; i < CHAR_NUMBER ; i++) {
-                    List<NodeId> currChar = new LinkedList<>();
-                    currChar.add(nextNode);
-                    transitions.set(i, currChar);
-                }
+                List<NodeId> dotTargets = new LinkedList<>();
+                dotTargets.add(nextNode);
+                transitions.set(DOT_POS, dotTargets);
 
                 // Put the nodes in the automaton
                 automaton.put(entryNode, transitions);
@@ -378,7 +385,6 @@ public class Automaton {
         }
 
         // If nothing was found, create it
-//        Pair<Set<NodeId>, NodeId> newPair = new Pair<>(nodeIdSet, NodeId.fromCollection(nodeIdSet));
         Pair<Set<NodeId>, NodeId> newPair = new Pair<>(nodeIdSet, getNextNodeId());
         nodeIdInstances.add(newPair);
         return newPair.getValue();
@@ -449,9 +455,16 @@ public class Automaton {
                             newTransitions.get(i).addAll(targets);
                         }
                     }
+
+                    // Process dot targets
+                    List<NodeId> dotTargets = automaton.get(subNode).get(DOT_POS);
+                    if(dotTargets != null) {
+                        if(newTransitions.get(DOT_POS) == null) newTransitions.set(DOT_POS, new LinkedList<>());
+                        newTransitions.get(DOT_POS).addAll(dotTargets);
+                    }
                 }
 
-                // Do the epsilon closure for each transition
+                // Do the epsilon closure for each char transition
                 for(int i = 0 ; i < CHAR_NUMBER ; i++) {
                     List<NodeId> newTargets = newTransitions.get(i);
                     if(newTargets != null) {
@@ -465,6 +478,20 @@ public class Automaton {
                         newTargets.clear();
                         newTargets.add(getNodeIdForSet(epsilon));
                     }
+                }
+
+                // Do the epsilon closure for the dot
+                List<NodeId> newDotTargets = newTransitions.get(DOT_POS);
+                if(newDotTargets != null) {
+                    // Get the epsilon closure
+                    Set<NodeId> epsilon = getEpsilonClosure(newDotTargets);
+
+                    // Add the set to the process list
+                    processList.add(epsilon);
+
+                    // Set the transition
+                    newDotTargets.clear();
+                    newDotTargets.add(getNodeIdForSet(epsilon));
                 }
 
                 // Set init and accept
