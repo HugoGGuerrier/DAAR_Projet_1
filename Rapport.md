@@ -19,6 +19,12 @@
 * Simple liste de travail qui se vide et se rempli de manière dynamique
 * Algorithme parcourant tous les noeud
 
+## Implémentation des l'algorithme de recherche
+* Utilisation du design pattern Strategy pour l'implémentation
+* Première implémentation : la recherche naïve
+* Deuxième implémentation : KMP
+
+
 ## Tests
 * Tests unitaires sur le parser pour vérifier la véracité du nouveau parser
 * Tests unitaires que la création du NDFA pour s'assurrer de son fonctionnement
@@ -34,3 +40,4 @@
 ## Idées d'améliorations
 * Faire hériter Automaton de la classe Map pour une implémentation plus élégante
 * Rajouter les parties manquante des e-regex
+* Utiliser une transition spéciale pour le "."

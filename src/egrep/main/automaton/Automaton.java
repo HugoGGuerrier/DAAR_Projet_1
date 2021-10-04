@@ -378,7 +378,8 @@ public class Automaton {
         }
 
         // If nothing was found, create it
-        Pair<Set<NodeId>, NodeId> newPair = new Pair<>(nodeIdSet, NodeId.fromCollection(nodeIdSet));
+//        Pair<Set<NodeId>, NodeId> newPair = new Pair<>(nodeIdSet, NodeId.fromCollection(nodeIdSet));
+        Pair<Set<NodeId>, NodeId> newPair = new Pair<>(nodeIdSet, getNextNodeId());
         nodeIdInstances.add(newPair);
         return newPair.getValue();
     }
@@ -419,12 +420,10 @@ public class Automaton {
         // Create the working variables
         List<Set<NodeId>> processList = new LinkedList<>();
 
-        // Init process list by entering the ndfa from the init node
-        Set<NodeId> initSet = new HashSet<>();
-        initSet.add(initNode);
-        for(List<NodeId> targets : automaton.get(initNode)) {
-            if(targets != null) initSet.addAll(targets);
-        }
+        // Init process list by entering the ndfa from the epsilon closure of the init node
+        List<NodeId> initList = new LinkedList<>();
+        initList.add(initNode);
+        Set<NodeId> initSet = getEpsilonClosure(initList);
 
         // Add the init list in the process list
         processList.add(initSet);
@@ -469,12 +468,12 @@ public class Automaton {
                 }
 
                 // Set init and accept
-                if(currentNode.contains(initNode)) {
+                if(currentSet.contains(initNode)) {
                     newTransitions.set(INIT_POS, new LinkedList<>());
                     initNode = currentNode;
                 }
 
-                if(currentNode.contains(ndfaFinalNode)) {
+                if(currentSet.contains(ndfaFinalNode)) {
                     newTransitions.set(ACCEPT_POS, new LinkedList<>());
                 }
 

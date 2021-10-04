@@ -14,7 +14,7 @@ import egrep.main.parser.RegExTree;
 public class Main {
     public static void main(String[] args) {
         // Define and print the regex string
-        String regex = "a|bc*";
+        String regex = "a|c*";
         System.out.println("The regex : " + regex + "\n");
 
         try {
