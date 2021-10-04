@@ -25,6 +25,12 @@
 * Tests unitaires sur la détermination
 * Tests unitaires sur la recherche à l'aide d'une regex
 
+## Benchmarking
+* Utilisation du texte "History of Babylonia"
+* Implémentation de plusieurs algorithmes de recherche pour tester et conclure sur leur efficacité
+* Création de multiples fichiers à partir de ce texte avec des tailles différentes pour pouvoir tester la monté en charge des algorithme de recherche
+* Création d'un mode d'exécution qui effectue les tests de benchmarking
+
 ## Idées d'améliorations
 * Faire hériter Automaton de la classe Map pour une implémentation plus élégante
 * Rajouter les parties manquante des e-regex
