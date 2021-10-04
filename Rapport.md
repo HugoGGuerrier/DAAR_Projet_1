@@ -40,3 +40,4 @@
 ## Idées d'améliorations
 * Faire hériter Automaton de la classe Map pour une implémentation plus élégante
 * Rajouter les parties manquante des e-regex
+* ab+ == abb* -> Ajout dans le parser sans avoir à modifier la création d'automate

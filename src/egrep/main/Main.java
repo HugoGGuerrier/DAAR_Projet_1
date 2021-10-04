@@ -14,8 +14,29 @@ import egrep.main.search_engine.NaiveStrategy;
  */
 public class Main {
     public static void main(String[] args) {
+        // Prepare the flags and variables
+        boolean helpFlag = false;
+        boolean benchmarkFlag = false;
+        String regex = null;
+        String fileRelativePath = null;
+
+        // Parse the arguments
+        for(String arg : args) {
+            switch (arg) {
+
+                case "--help":
+                case "-h":
+                    helpFlag = true;
+                    break;
+
+                default:
+                    if(regex == null) regex = arg;
+                    else if(fileRelativePath == null) fileRelativePath = arg;
+
+            }
+        }
+
         // Define and print the regex string
-        String regex = "couu*couu*";
         System.out.println("The regex : " + regex + "\n");
 
         try {
@@ -48,6 +69,11 @@ public class Main {
 
             System.out.println(automaton);
             System.out.println("Deterministic Automaton creation duration : " + (deterAutoEndTime - deterAutoStartTime) + "ms\n");
+
+            NaiveStrategy strategy = new NaiveStrategy();
+            if(strategy.isMatching(automaton, "salutccoucou bisou")) {
+                System.out.println("Matching OK");
+            }
 
         } catch(Exception e) {
             e.printStackTrace();

@@ -22,6 +22,7 @@ public class NaiveStrategy implements SearchStrategy {
 
         // Iterate over all the input
         while(cursor < input.length()) {
+            // Init the next input to the current cursor
             int nextInput = cursor;
 
             try {
@@ -32,15 +33,14 @@ public class NaiveStrategy implements SearchStrategy {
                     nextInput++;
                 }
 
+            } catch(RegexMatchingException ignored) {
+            } finally {
                 // Reset the automaton
                 automaton.reset();
 
-            } catch (RegexMatchingException e) {
-                return false;
-            } finally {
+                // Increase the cursor
                 cursor++;
             }
-
         }
 
         // The default result, if the input cannot match
