@@ -2,11 +2,13 @@ package egrep.main.search_engine;
 
 import egrep.main.automaton.Automaton;
 import egrep.main.exceptions.AutomatonException;
+import egrep.main.exceptions.CharacterException;
 import egrep.main.exceptions.ParsingException;
 import egrep.main.parser.RegExParser;
 import egrep.main.utils.Pair;
 
-import java.io.File;
+import java.io.*;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -69,8 +71,20 @@ public class SearchEngine {
      *
      * @return The list of pair (number, line) of the mathed lines
      */
-    public List<Pair<Integer, String>> searchLines() {
-        return null;
+    public List<Pair<Integer, String>> searchLines() throws IOException, AutomatonException, CharacterException {
+        // Prepare the result
+        List<Pair<Integer, String>> res = new LinkedList<>();
+
+        // Open the input file and process it line by line
+        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+        String line;
+        int lineNumber = 1;
+        while((line = reader.readLine()) != null) {
+            if(strategy.isMatching(automaton, line)) res.add(new Pair<>(lineNumber++, line));
+        }
+
+        // Return the result
+        return res;
     }
 
 }

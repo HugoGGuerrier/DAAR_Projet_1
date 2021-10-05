@@ -1,7 +1,7 @@
 # DAAR | Projet 1 : Clone de "egrep"
 
 Auteurs : Emilie SIAU | Hugo GUERRIER\
-Version : 0.2
+Version : 0.4
 
 ## Dépendances :
 

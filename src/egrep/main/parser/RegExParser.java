@@ -300,22 +300,24 @@ public class RegExParser {
         boolean done = false;
         RegExTree gauche = null;
 
-        for (RegExTree t: trees) {
+        for (int i = 0 ; i < trees.size() ; i++) {
+            RegExTree t = trees.get(i);
+
             if (!found && t.getRoot() == ALTERN && t.getSubTrees().isEmpty()) {
                 // If there is no left altern part throw an exception
-                if (result.isEmpty()) {
+                if(result.isEmpty()) {
                     throw new ParsingException("Error during parsing : missing '|' left part");
+                }
+
+                // If there is not right altern part throw an exception
+                if(i >= trees.size() - 1) {
+                    throw new ParsingException("Error during parsing : missing '|' right part");
                 }
 
                 // Found the altern symbol, get the left part
                 found = true;
                 gauche = result.remove(result.size()-1);
             } else if (found && !done) {
-                // If there is no left part, throw an exception
-                if (gauche==null) {
-                    throw new ParsingException("Error during parsing : missing '|' left part");
-                }
-
                 // Found the altern symbol so get the right part
                 done=true;
                 ArrayList<RegExTree> subTrees = new ArrayList<>();

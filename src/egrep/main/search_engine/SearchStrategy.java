@@ -11,5 +11,14 @@ import egrep.main.exceptions.CharacterException;
  * @author Hugo GUERRIER
  */
 public interface SearchStrategy {
+    /**
+     * Get if a input string is matchig with a regex automaton
+     *
+     * @param automaton The automaton
+     * @param input The input string
+     * @return True if the string matches
+     * @throws AutomatonException If the automaton has an error
+     * @throws CharacterException If there is a non ASCII character
+     */
     boolean isMatching(Automaton automaton, String input) throws AutomatonException, CharacterException;
 }
