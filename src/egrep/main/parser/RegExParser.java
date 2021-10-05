@@ -78,8 +78,8 @@ public class RegExParser {
         }
 
         // Verify the regex non nullity
-        if(regEx == null) {
-            return null;
+        if(regEx == null || regEx.isEmpty()) {
+            throw new ParsingException("Regex cannot be null or empty");
         }
 
         // Prepare the result

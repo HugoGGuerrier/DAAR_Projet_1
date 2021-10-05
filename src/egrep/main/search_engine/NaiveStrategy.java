@@ -2,7 +2,6 @@ package egrep.main.search_engine;
 
 import egrep.main.automaton.Automaton;
 import egrep.main.exceptions.AutomatonException;
-import egrep.main.exceptions.CharacterException;
 import egrep.main.exceptions.RegexMatchingException;
 
 /**
@@ -16,7 +15,7 @@ public class NaiveStrategy implements SearchStrategy {
     // ----- Override methods -----
 
     @Override
-    public boolean isMatching(Automaton automaton, String input) throws AutomatonException, CharacterException {
+    public boolean isMatching(Automaton automaton, String input) throws AutomatonException {
         // Prepare the working variables
         int cursor = 0;
 

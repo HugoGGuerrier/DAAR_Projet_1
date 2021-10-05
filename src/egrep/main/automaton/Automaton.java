@@ -1,12 +1,10 @@
 package egrep.main.automaton;
 
 import egrep.main.exceptions.AutomatonException;
-import egrep.main.exceptions.CharacterException;
 import egrep.main.exceptions.RegexMatchingException;
 import egrep.main.parser.RegExTree;
 import egrep.main.utils.Pair;
 
-import java.nio.charset.CharacterCodingException;
 import java.util.*;
 
 import static egrep.main.parser.RegExParser.*;
@@ -212,9 +210,8 @@ public class Automaton {
      * @return True if the automaton is in a final state after the input
      * @throws RegexMatchingException If the input cannot match the automaton
      * @throws AutomatonException If the automaton is not deterministic
-     * @throws CharacterException If the character is not in the ASCII table
      */
-    public boolean input(char c) throws RegexMatchingException, AutomatonException, CharacterException {
+    public boolean input(char c) throws RegexMatchingException, AutomatonException {
         // Test for the input in the automaton
         if(determinist) {
             if((int) c <= CHAR_NUMBER) {
@@ -230,7 +227,7 @@ public class Automaton {
                 }
 
             } else {
-                throw new CharacterException("The input character need to be conform to the ASCII standard");
+                throw new RegexMatchingException("Unhandled character");
             }
         } else {
             throw new AutomatonException("The automaton need to be deterministic");

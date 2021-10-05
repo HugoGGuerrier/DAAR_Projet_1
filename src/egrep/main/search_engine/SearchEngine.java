@@ -2,7 +2,6 @@ package egrep.main.search_engine;
 
 import egrep.main.automaton.Automaton;
 import egrep.main.exceptions.AutomatonException;
-import egrep.main.exceptions.CharacterException;
 import egrep.main.exceptions.ParsingException;
 import egrep.main.parser.RegExParser;
 import egrep.main.utils.Pair;
@@ -71,7 +70,7 @@ public class SearchEngine {
      *
      * @return The list of pair (number, line) of the mathed lines
      */
-    public List<Pair<Integer, String>> searchLines() throws IOException, AutomatonException, CharacterException {
+    public List<Pair<Integer, String>> searchLines() throws IOException, AutomatonException {
         // Prepare the result
         List<Pair<Integer, String>> res = new LinkedList<>();
 
@@ -80,7 +79,8 @@ public class SearchEngine {
         String line;
         int lineNumber = 1;
         while((line = reader.readLine()) != null) {
-            if(strategy.isMatching(automaton, line)) res.add(new Pair<>(lineNumber++, line));
+            if(strategy.isMatching(automaton, line)) res.add(new Pair<>(lineNumber, line));
+            lineNumber++;
         }
 
         // Return the result

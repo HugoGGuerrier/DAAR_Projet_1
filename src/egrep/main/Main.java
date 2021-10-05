@@ -1,17 +1,11 @@
 package egrep.main;
 
-import egrep.main.automaton.Automaton;
 import egrep.main.exceptions.AutomatonException;
-import egrep.main.exceptions.CharacterException;
 import egrep.main.exceptions.ParsingException;
-import egrep.main.parser.RegExParser;
-import egrep.main.parser.RegExTree;
-import egrep.main.search_engine.NaiveStrategy;
 import egrep.main.search_engine.SearchEngine;
 import egrep.main.utils.Pair;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -73,16 +67,15 @@ public class Main {
                 results = engine.searchLines();
 
                 // Presenting the result
-
+                for(Pair<Integer, String> line : results) {
+                    System.out.println(line.getKey() + " : " + line.getValue());
+                }
 
             } catch(ParsingException e) {
                 System.out.println("The regex cannot be parsed. Message : " + e.getMessage());
                 if(verboseFlag) e.printStackTrace();
             } catch(AutomatonException e) {
                 System.out.println("The automaton is not deterministic");
-                if(verboseFlag) e.printStackTrace();
-            } catch(CharacterException e) {
-                System.out.println("There is a non ASCII character in the text");
                 if(verboseFlag) e.printStackTrace();
             } catch(IOException e) {
                 System.out.println("Error during the input file reading");
