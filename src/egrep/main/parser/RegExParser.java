@@ -16,14 +16,18 @@ public class RegExParser {
 
     // ----- Macros -----
 
-    public static final int CONCAT = 0xFF1;
-    public static final int STAR = 0xFF2;
-    public static final int ALTERN = 0xFF3;
-    public static final int DOT = 0xFF7;
+    // - Special characters -
 
-    public static final int L_PAREN = 0xFF5;
-    public static final int R_PAREN = 0xFF6;
-    public static final int PROTECTION = 0xFF4;
+    public static final char[] HANDLED_OPERATORS = {'*', '|'};
+    public static final int STAR = 0xFF2;   // ex: "a*", 'a' as many times as we can have it (0 or more)
+    public static final int ALTERN = 0xFF3; // ex: "a|b", 'a' or 'b'
+    public static final int CONCAT = 0xFF1; // The concatenation is not visible. "ab" is read as 'a' then 'b'
+
+    public static final int DOT = 0xFF7;    // Universal character
+
+    public static final int L_PAREN = 0xFF5;    // Left parenthesis, acts on the operators priorities
+    public static final int R_PAREN = 0xFF6;    // Right parenthesis, completing the left one
+    public static final int PROTECTION = 0xFF4; // Protecting/escaping a special character: "\*" corresponds to the simple star char
 
     // ----- Attributes -----
 

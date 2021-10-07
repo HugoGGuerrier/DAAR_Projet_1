@@ -125,7 +125,7 @@ public class TestParser {
     }
 
     /**
-     * Test the alter symbol
+     * Test the altern symbol
      */
     @Test
     void testAltern() {

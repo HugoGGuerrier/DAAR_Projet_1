@@ -28,38 +28,36 @@ public class SearchEngine {
     // ----- Constructors -----
 
     /**
-     * Create a new search engine with the wanted regular expression and the input file path and the default search
-     * strategy
-     *
-     * @param regex The regular expression
-     * @param fileRelativePath The input file
-     * @throws ParsingException If the regex is not correct
-     */
-    public SearchEngine(String regex, String fileRelativePath) throws ParsingException {
-        this(regex, fileRelativePath, new NaiveStrategy());
-    }
-
-    /**
-     * Create a new search engine with the wanted regular expression, input file and search strategy
+     * Create a new search engine with the wanted regular expression and input file.
+     * It selects the suiting strategy (naive or KMP) for the given regex
      *
      * @param regex The regex
      * @param fileRelativePath The input file relative path
-     * @param strat The search strategy
      * @throws ParsingException If the regex is not correct
      */
-    public SearchEngine(String regex, String fileRelativePath, SearchStrategy strat) throws ParsingException {
+    public SearchEngine(String regex, String fileRelativePath) throws ParsingException {
         // Set the attributes
         this.regex = regex;
         inputFile = new File(fileRelativePath);
-        strategy = strat;
 
-        // Create the automaton
-        RegExParser parser = new RegExParser(regex);
-        try {
-            automaton = new Automaton(parser.parse());
-        } catch (AutomatonException e) {
-            System.err.println("This CANNOT happen");
-            e.printStackTrace();
+        // Select the best strategy, following if the regex is only concatenations or not
+        if (KMPStrategy.isValidKMP(regex)){
+
+            strategy = new KMPStrategy(regex);
+            automaton = null;
+
+        } else {
+
+            strategy = new NaiveStrategy();
+
+            // Create the automaton
+            RegExParser parser = new RegExParser(regex);
+            try {
+                automaton = new Automaton(parser.parse());
+            } catch (AutomatonException e) {
+                System.err.println("This CANNOT happen");
+                e.printStackTrace();
+            }
         }
     }
 
@@ -68,7 +66,7 @@ public class SearchEngine {
     /**
      * Process the search engine on the input file and return a list of matched lines
      *
-     * @return The list of pair (number, line) of the mathed lines
+     * @return The list of pair (number, line) of the matched lines
      */
     public List<Pair<Integer, String>> searchLines() throws IOException, AutomatonException {
         // Prepare the result

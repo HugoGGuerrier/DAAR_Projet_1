@@ -29,4 +29,9 @@ public class TestAutomaton {
         RegExTree tree = RegExParser.exampleAhoUllman();
         // TODO : Suite
     }
+
+    @Test
+    void testConcat() {
+
+    }
 }

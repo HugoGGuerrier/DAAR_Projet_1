@@ -41,3 +41,7 @@
 * Faire hériter Automaton de la classe Map pour une implémentation plus élégante
 * Rajouter les parties manquante des e-regex
 * ab+ == abb* -> Ajout dans le parser sans avoir à modifier la création d'automate
+* Prendre en compte l'escaping de caractère dans NaiveStrategy -> RegExParser
+
+/!\ TODO : vérifier la priorité opératoire du CONCAT sur le ALTERN (test avec egrep)
+et aussi, faire les tests sur le String.matches(String regex) de JAVA 
