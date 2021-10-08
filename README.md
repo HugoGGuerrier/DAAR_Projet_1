@@ -18,7 +18,7 @@ Version : 0.4
 
 ## A faire :
 
-* Définir le constructeur d'automate
-* Définir la méthode de détermination de l'automate
-* Faire la suite de tests pour le parser
+* Faire l'algo de KMP
+* Faire la suite de tests pour l'automate
+* Faire les tests de performance (Le mode benchmark)
 * Faire le rapport
