@@ -20,12 +20,12 @@ public class Automaton {
 
     // ----- Macros -----
 
-    private static final int AUTOMATON_TABLE_SIZE = 260;
-    private static final int CHAR_NUMBER = 256;
-    private static final int DOT_POS = 256;
-    private static final int EPSILON_POS = 257;
-    private static final int INIT_POS = 258;
-    private static final int ACCEPT_POS = 259;
+    public static final int AUTOMATON_TABLE_SIZE = 260;
+    public static final int CHAR_NUMBER = 256;
+    public static final int DOT_POS = 256;
+    public static final int EPSILON_POS = 257;
+    public static final int INIT_POS = 258;
+    public static final int ACCEPT_POS = 259;
 
     // ----- Attributes -----
 
@@ -75,6 +75,16 @@ public class Automaton {
         if(autoCreate) create();
     }
 
+    // ----- Getters -----
+
+    public Map<NodeId, ArrayList<List<NodeId>>> getAutomaton() {
+        return automaton;
+    }
+
+    public NodeId getInitNode() {
+        return initNode;
+    }
+
     // ----- Override methods -----
 
     @Override
@@ -101,7 +111,7 @@ public class Automaton {
                 }
             }
 
-            // Process the dot transtion
+            // Process the dot transition
             List<NodeId> dotTargets = automaton.get(currNode).get(DOT_POS);
             if(dotTargets != null) {
                 if(transCpt > 0) transitionString.append(", ");
@@ -167,24 +177,20 @@ public class Automaton {
 
             // Create the final node
             nextNodeId = 0;
-            NodeId finalNode = getNextNodeId();
+            ndfaFinalNode = getNextNodeId();
 
             // Set the final transitions
             ArrayList<List<NodeId>> finalTransitions = getNewTransitionList();
 
             // Set the final position to an empty linked list to represent the true
             finalTransitions.set(ACCEPT_POS, new LinkedList<>());
-            automaton.put(finalNode, finalTransitions);
+            automaton.put(ndfaFinalNode, finalTransitions);
 
             // Start the automaton creation
-            NodeId initialNode = processNDFA(tree, finalNode);
+            initNode = processNDFA(tree, ndfaFinalNode);
 
             // Set the initial state, same as the final state
-            automaton.get(initialNode).set(INIT_POS, new LinkedList<>());
-
-            // Save the initial and final node of the ndfa
-            initNode = initialNode;
-            ndfaFinalNode = finalNode;
+            automaton.get(initNode).set(INIT_POS, new LinkedList<>());
         }
     }
 
@@ -395,6 +401,9 @@ public class Automaton {
                 epsilon.add(finalNode);
                 nextTransitions.set(EPSILON_POS, epsilon);
 
+                // Put the next node in the automaton
+                automaton.put(nextNode, nextTransitions);
+
                 // Set the node transitions
                 transitions = getNewTransitionList();
                 List<NodeId> dotTargets = new LinkedList<>();
@@ -403,7 +412,6 @@ public class Automaton {
 
                 // Put the nodes in the automaton
                 automaton.put(entryNode, transitions);
-                automaton.put(nextNode, nextTransitions);
                 break;
 
             default:
@@ -419,15 +427,17 @@ public class Automaton {
                 epsilon.add(finalNode);
                 nextTransitions.set(EPSILON_POS, epsilon);
 
+                // Put the next node in the automaton
+                automaton.put(nextNode, nextTransitions);
+
                 // Set the node transitions
                 transitions = getNewTransitionList();
                 List<NodeId> character = new LinkedList<>();
                 character.add(nextNode);
                 transitions.set(charIndex, character);
 
-                // Put the nodes in the automaton
+                // Put the node in the automaton
                 automaton.put(entryNode, transitions);
-                automaton.put(nextNode, nextTransitions);
         }
 
         // Return the built entry node
