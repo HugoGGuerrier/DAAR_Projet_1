@@ -14,6 +14,14 @@ public class NaiveStrategy implements SearchStrategy {
 
     // ----- Override methods -----
 
+    /**
+     * Tell if the input corresponds to the regex-base automaton, using the naive strategy
+     *
+     * @param automaton The automaton to use, built from a regex
+     * @param input The input string
+     * @return true if the input matches with the automaton (built from the regex), false otherwise
+     * @throws AutomatonException if the automaton encounters a problem (not deterministic automaton)
+     */
     @Override
     public boolean isMatching(Automaton automaton, String input) throws AutomatonException {
         // Prepare the working variables
