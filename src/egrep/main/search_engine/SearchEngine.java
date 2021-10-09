@@ -23,7 +23,8 @@ public class SearchEngine {
 
     public enum Strategy {
         NAIVE,
-        KMP
+        KMP,
+        JAVA_NATIVE
     }
 
     // ----- Attributes -----
@@ -94,6 +95,11 @@ public class SearchEngine {
                 } else {
                     throw new SearchEngineException("Cannot require the KMP strategy for the regex " + regex);
                 }
+                break;
+
+            case JAVA_NATIVE:
+                strategy = new JavaNativeStrategy(this.regex);
+                automaton = null;
                 break;
 
             case NAIVE:

@@ -4,6 +4,7 @@ import egrep.main.automaton.Automaton;
 import egrep.main.exceptions.AutomatonException;
 import egrep.main.parser.RegExParser;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,11 +72,6 @@ public class KMPStrategy implements SearchStrategy {
      */
     private void buildCarryOver() {
         // Initialize the carry over array
-        /* TODO
-        carryOver = new int[factor.length() + 1];
-        carryOver[0] = -1;                     // First value is always -1
-        carryOver[carryOver.length - 1] = 0;   // Last value is always 0
-        */
         carryOver = new int[factor.length()];
         carryOver[0] = -1;                     // First value is always -1
 
@@ -86,7 +82,7 @@ public class KMPStrategy implements SearchStrategy {
             // --- Compute all the suffixes for F[1:i[
             Set<String> suffixes = new HashSet<>();
             for (int j = 1 ; j < i ; j++) {
-                suffixes.add(factor.substring(j, i-1));
+                suffixes.add(factor.substring(j, i));
             }
 
             // --- Match the suffixes as prefixes of F and pick the longest one

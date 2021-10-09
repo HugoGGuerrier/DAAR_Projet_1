@@ -95,11 +95,14 @@ public class Main {
             testFiles[i] = testBankDir + "/" + testFileNames[i];
         }
 
-        // Define the test regex
+
+        // === Define the test regex
         String regex = "Babylon";
 
+        System.out.println("=== For the regular expression " + regex + " ===");
+
         // Test the naive strategy and show the result
-        System.out.println("=== Naive strategy benchmark on file size, for the regex \"" + regex + "\"\n");
+        System.out.println("\n== Naive strategy benchmark on file size\n");
         for(int i = 0 ; i < testFiles.length ; i++) {
             String testFile = testFiles[i];
             int size = sizes[i];
@@ -121,7 +124,7 @@ public class Main {
         }
 
         // Test the KMP strategy and show the result
-        System.out.println("\n=== KMP strategy benchmark on file size, for the regex \"" + regex + "\"\n");
+        System.out.println("\n== KMP strategy benchmark on file size\n");
         for(int i = 0 ; i < testFiles.length ; i++) {
             String testFile = testFiles[i];
             int size = sizes[i];
@@ -129,6 +132,27 @@ public class Main {
             try {
 
                 SearchEngine engine = new SearchEngine(regex, testFile, SearchEngine.Strategy.KMP);
+                long startTime = System.currentTimeMillis();
+                List<Pair<Integer, String>> res = engine.searchLines();
+                long endTime = System.currentTimeMillis();
+
+                System.out.println(testFile + " (" + size + " lines)  matched result=" + res.size() + "  |  search duration=" + (endTime - startTime) + " ms");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        // Test the java native strategy and show the result
+        System.out.println("\n== Java Native strategy benchmark on file size\n");
+        for(int i = 0 ; i < testFiles.length ; i++) {
+            String testFile = testFiles[i];
+            int size = sizes[i];
+
+            try {
+
+                SearchEngine engine = new SearchEngine(regex, testFile, SearchEngine.Strategy.JAVA_NATIVE);
                 long startTime = System.currentTimeMillis();
                 List<Pair<Integer, String>> res = engine.searchLines();
                 long endTime = System.currentTimeMillis();

@@ -18,7 +18,9 @@ public class TestKMP {
         assertTrue(true);
     }
 
-
+    /**
+     * Test the validation methods for KMP
+     */
     @Test
     void testIsValidKMP() {
         assertTrue(KMPStrategy.isValidKMP("abcdef!"));
@@ -29,13 +31,15 @@ public class TestKMP {
 
         assertFalse(KMPStrategy.isValidKMP("a*"));
         assertFalse(KMPStrategy.isValidKMP("a|b"));
-        //assertFalse(KMPStrategy.isValidKMP("o+"));
     }
 
+    /**
+     * Test the carry over creation
+     */
     @Test
-    void testCarryOut() {
+    void testCarryOver() {
         KMPStrategy kmp = new KMPStrategy("mamamia");
-        kmp.equalsCarryOver(new int[]{-1, 0, -1, 0, -1, 3, 0});
+        assertTrue(kmp.equalsCarryOver(new int[]{-1, 0, -1, 0, -1, 3, 0}));
     }
 
     @Test
@@ -47,7 +51,14 @@ public class TestKMP {
         KMPStrategy kmp = new KMPStrategy(regex);
 
         try {
-            assertTrue(kmp.isMatching(null, regex));
+
+            assertTrue(kmp.isMatching(null, "Babylon"));
+            assertTrue(kmp.isMatching(null, "This is a Babylonian story"));
+
+            assertFalse(kmp.isMatching(null, ""));
+            assertFalse(kmp.isMatching(null, "Babylol"));
+            assertFalse(kmp.isMatching(null, "Rien à voir"));
+
         } catch(Exception e) {
             fail(e);
         }
