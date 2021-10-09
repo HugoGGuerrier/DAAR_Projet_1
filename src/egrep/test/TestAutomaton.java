@@ -32,6 +32,24 @@ public class TestAutomaton {
 
     @Test
     void testConcat() {
+        String regex = "ab";
+        RegExParser parser = new RegExParser(regex);
+
+        
+    }
+
+    @Test
+    void testDot() {
+
+    }
+
+    @Test
+    void testStar() {
+
+    }
+
+    @Test
+    void testAltern() {
 
     }
 }

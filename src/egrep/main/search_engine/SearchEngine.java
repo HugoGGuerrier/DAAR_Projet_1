@@ -3,6 +3,7 @@ package egrep.main.search_engine;
 import egrep.main.automaton.Automaton;
 import egrep.main.exceptions.AutomatonException;
 import egrep.main.exceptions.ParsingException;
+import egrep.main.exceptions.SearchEngineException;
 import egrep.main.parser.RegExParser;
 import egrep.main.utils.Pair;
 
@@ -17,6 +18,13 @@ import java.util.List;
  * @author Hugo GUERRIER
  */
 public class SearchEngine {
+
+    // ----- Macros -----
+
+    public enum Strategy {
+        NAIVE,
+        KMP
+    }
 
     // ----- Attributes -----
 
@@ -58,6 +66,47 @@ public class SearchEngine {
                 System.err.println("This CANNOT happen");
                 e.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * Create a new search engine with the wanted regex, input file and force it to use the wanted strategy
+     * If the strategy is not suitable, it throws a special exception
+     *
+     * @param regex The regular expression
+     * @param fileRelativePath The file to search in
+     * @param strat The wanted strategy
+     * @throws ParsingException If there is an error during the regex parsing
+     * @throws SearchEngineException If the wanted strategy is not suitable for the given regex
+     */
+    public SearchEngine(String regex, String fileRelativePath, Strategy strat) throws ParsingException, SearchEngineException {
+        // Set the common attributes
+        this.regex = regex;
+        inputFile = new File(fileRelativePath);
+
+        // Set up the searching strategy
+        switch (strat) {
+
+            case KMP:
+                if(KMPStrategy.isValidKMP(regex)) {
+                    strategy = new KMPStrategy(this.regex);
+                    automaton = null;
+                } else {
+                    throw new SearchEngineException("Cannot require the KMP strategy for the regex " + regex);
+                }
+                break;
+
+            case NAIVE:
+            default:
+                strategy = new NaiveStrategy();
+                RegExParser parser = new RegExParser(regex);
+                try {
+                    automaton = new Automaton(parser.parse());
+                } catch (AutomatonException e) {
+                    System.err.println("This CANNOT happen");
+                    e.printStackTrace();
+                }
+
         }
     }
 

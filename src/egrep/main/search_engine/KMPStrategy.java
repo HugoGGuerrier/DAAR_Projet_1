@@ -24,14 +24,14 @@ public class KMPStrategy implements SearchStrategy {
 
     // ----- Constructors -----
 
-    public KMPStrategy(String str) {
+    public KMPStrategy(String regex) {
         // Build the ignored characters set
         ignoredChars = new HashSet<>();
         ignoredChars.add('(');
         ignoredChars.add(')');
 
         // Sanitize the string by ignoring those ignored characters
-        sanitize(str);
+        sanitize(regex);
 
         // Create the carry over array from the sanitized string
         buildCarryOver();
@@ -44,13 +44,13 @@ public class KMPStrategy implements SearchStrategy {
      * Verify if the given string is valid for using the KMP strategy : no handled operators,
      * only simple characters
      *
-     * @param str The string to verify
+     * @param regex The string to verify
      * @return true if the string is valid, false if the string is not valid
      */
-    public static boolean isValidKMP(String str) {
-        for (int i = 0 ; i < str.length() ; i++) {
+    public static boolean isValidKMP(String regex) {
+        for (int i = 0 ; i < regex.length() ; i++) {
             for (int j = 0 ; j < RegExParser.HANDLED_OPERATORS.length ; j++) {
-                if (str.charAt(i) == RegExParser.HANDLED_OPERATORS[j]) return false;
+                if (regex.charAt(i) == RegExParser.HANDLED_OPERATORS[j]) return false;
             }
         }
         return true;
@@ -110,4 +110,5 @@ public class KMPStrategy implements SearchStrategy {
         // TODO
         return false;
     }
+
 }

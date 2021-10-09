@@ -2,9 +2,11 @@ package egrep.main;
 
 import egrep.main.exceptions.AutomatonException;
 import egrep.main.exceptions.ParsingException;
+import egrep.main.exceptions.SearchEngineException;
 import egrep.main.search_engine.SearchEngine;
 import egrep.main.utils.Pair;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -19,11 +21,12 @@ public class Main {
 
     // ----- Utils attributes -----
 
+    public static boolean verboseFlag = false;
+
     private static final String version = "0.4";
 
     private static boolean helpFlag = false;
     private static boolean benchmarkFlag = false;
-    private static boolean verboseFlag = false;
     private static boolean validCall = true;
 
     private static String regex = null;
@@ -50,7 +53,94 @@ public class Main {
     }
 
     private static void benchmark() {
-        System.out.println("BENCHMARK MODE");
+        // Display some info
+        System.out.println("===== Entering the benchmark mode =====\n");
+
+        // Prepare the benchmark variables
+        String testBankDir = "test_bank";
+        String[] testFileNames = {
+                "HOB_1.txt",
+                "HOB_50.txt",
+                "HOB_100.txt",
+                "HOB_150.txt",
+                "HOB_200.txt",
+                "HOB_500.txt",
+                "HOB_1000.txt",
+                "HOB_1500.txt",
+                "HOB_2000.txt",
+                "HOB_5000.txt",
+                "HOB_10000.txt",
+                "HOB_original.txt",
+                "HOB_x2.txt"
+        };
+        int[] sizes = {
+                1,
+                50,
+                100,
+                150,
+                200,
+                500,
+                1000,
+                1500,
+                2000,
+                5000,
+                10000,
+                13308,
+                13308 * 2
+        };
+
+        // Get all the test files full name
+        String[] testFiles = new String[testFileNames.length];
+        for(int i = 0 ; i < testFiles.length ; i++) {
+            testFiles[i] = testBankDir + "/" + testFileNames[i];
+        }
+
+        // Define the test regex
+        String regex = "Babylon";
+
+        // Test the naive strategy and show the result
+        System.out.println("=== Naive strategy benchmark on file size, for the regex \"Babylon\"\n");
+        for(int i = 0 ; i < testFiles.length ; i++) {
+            String testFile = testFiles[i];
+            int size = sizes[i];
+
+            try {
+
+                SearchEngine engine = new SearchEngine(regex, testFile, SearchEngine.Strategy.NAIVE);
+                long startTime = System.currentTimeMillis();
+                List<Pair<Integer, String>> res = engine.searchLines();
+                long endTime = System.currentTimeMillis();
+
+                System.out.println(testFile + " (" + size + " lines)  matched result=" + res.size() + "  |  search duration=" + (endTime - startTime) + " ms");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+
+        }
+
+        // Test the kmp strategy and show the result
+        System.out.println("=== KMP strategy benchmark on file size, for the regex \"Babylon\"\n");
+        for(int i = 0 ; i < testFiles.length ; i++) {
+            String testFile = testFiles[i];
+            int size = sizes[i];
+
+            try {
+
+                SearchEngine engine = new SearchEngine(regex, testFile, SearchEngine.Strategy.KMP);
+                long startTime = System.currentTimeMillis();
+                List<Pair<Integer, String>> res = engine.searchLines();
+                long endTime = System.currentTimeMillis();
+
+                System.out.println(testFile + " (" + size + " lines)  matched result=" + res.size() + "  |  search duration=" + (endTime - startTime) + " ms");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+
+        }
     }
 
     private static void run() {
@@ -72,13 +162,13 @@ public class Main {
                 }
 
             } catch(ParsingException e) {
-                System.out.println("The regex cannot be parsed. Message : " + e.getMessage());
+                System.err.println("The regex cannot be parsed. Message : " + e.getMessage());
                 if(verboseFlag) e.printStackTrace();
             } catch(AutomatonException e) {
-                System.out.println("The automaton is not deterministic");
+                System.err.println("The automaton is not deterministic");
                 if(verboseFlag) e.printStackTrace();
             } catch(IOException e) {
-                System.out.println("Error during the input file reading");
+                System.err.println("Error during the input file reading");
                 if(verboseFlag) e.printStackTrace();
             }
 
