@@ -4,7 +4,6 @@ import egrep.main.automaton.Automaton;
 import egrep.main.exceptions.AutomatonException;
 import egrep.main.parser.RegExParser;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,7 +18,7 @@ public class KMPStrategy implements SearchStrategy {
     // ----- Attributes -----
 
     private final Set<Character> ignoredChars;
-    private String factor;      // The regex factor representation
+    private String regex;      // The regex representation
     private int[] carryOver;    // The carry over array
 
     // ----- Constructors -----
@@ -64,7 +63,7 @@ public class KMPStrategy implements SearchStrategy {
             char c = str.charAt(i);
             if (!ignoredChars.contains(c)) sb.append(c);
         }
-        factor = sb.toString();
+        this.regex = sb.toString();
     }
 
     /**
@@ -72,23 +71,23 @@ public class KMPStrategy implements SearchStrategy {
      */
     private void buildCarryOver() {
         // Initialize the carry over array
-        carryOver = new int[factor.length()];
+        carryOver = new int[regex.length()];
         carryOver[0] = -1;                     // First value is always -1
 
         // Iterate on the factor (F) (ignoring first character) to compute each corresponding value of the carry over (CO)
-        for (int i = 1 ; i < factor.length() ; i++) {
+        for (int i = 1; i < regex.length() ; i++) {
             // CO[i] = size of the greatest suffix of F[1:i[ that is also a prefix of F
 
             // --- Compute all the suffixes for F[1:i[
             Set<String> suffixes = new HashSet<>();
             for (int j = 1 ; j < i ; j++) {
-                suffixes.add(factor.substring(j, i));
+                suffixes.add(regex.substring(j, i));
             }
 
             // --- Match the suffixes as prefixes of F and pick the longest one
             int maxSize = 0;
             for (String suffix : suffixes) {
-                if (factor.startsWith(suffix)) {
+                if (regex.startsWith(suffix)) {
                     if (suffix.length() > maxSize) maxSize = suffix.length();
                 }
             }
@@ -97,8 +96,8 @@ public class KMPStrategy implements SearchStrategy {
         }
 
         // Optimizing the carry over values (eliminating redundancy)
-        for (int i = 0 ; i < factor.length() ; i++) {
-            if (carryOver[i] >= 0 && factor.charAt(i) == factor.charAt(carryOver[i])) {
+        for (int i = 0; i < regex.length() ; i++) {
+            if (carryOver[i] >= 0 && regex.charAt(i) == regex.charAt(carryOver[i])) {
                 carryOver[i] = carryOver[carryOver[i]];
             }
         }
@@ -127,24 +126,24 @@ public class KMPStrategy implements SearchStrategy {
     public boolean isMatching(Automaton ignored, String input) throws AutomatonException {
         // Prepare the working variables
         int inputPos = 0;
-        int factorPos = 0;
+        int regexPos = 0;
 
         // Iterate over all the input
         while (inputPos < input.length()) {
 
             // Test if there is a match (the dot character always matches)
-            if (input.charAt(inputPos) == factor.charAt(factorPos) || factor.charAt(factorPos) == '.') {
+            if (input.charAt(inputPos) == regex.charAt(regexPos) || regex.charAt(regexPos) == '.') {
                 // It's a match ! Go to the next character to test
                 inputPos++;
-                factorPos++;
+                regexPos++;
             } else {
                 // Not a match. Use the carry over to update the input position, and return to the start of the regex
-                inputPos = inputPos - carryOver[factorPos];
-                factorPos = 0;
+                inputPos = inputPos - carryOver[regexPos];
+                regexPos = 0;
             }
 
             // If we tested all the regex without problems, return true
-            if (factorPos == factor.length()) return true;
+            if (regexPos == regex.length()) return true;
         }
 
         // The default result, if we tested all the input without finding a match
