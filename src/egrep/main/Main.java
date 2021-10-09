@@ -99,7 +99,7 @@ public class Main {
         String regex = "Babylon";
 
         // Test the naive strategy and show the result
-        System.out.println("=== Naive strategy benchmark on file size, for the regex \"Babylon\"\n");
+        System.out.println("=== Naive strategy benchmark on file size, for the regex \"" + regex + "\"\n");
         for(int i = 0 ; i < testFiles.length ; i++) {
             String testFile = testFiles[i];
             int size = sizes[i];
@@ -121,7 +121,7 @@ public class Main {
         }
 
         // Test the KMP strategy and show the result
-        System.out.println("=== KMP strategy benchmark on file size, for the regex \"Babylon\"\n");
+        System.out.println("\n=== KMP strategy benchmark on file size, for the regex \"" + regex + "\"\n");
         for(int i = 0 ; i < testFiles.length ; i++) {
             String testFile = testFiles[i];
             int size = sizes[i];
