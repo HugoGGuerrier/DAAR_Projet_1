@@ -24,6 +24,9 @@ public class NaiveStrategy implements SearchStrategy {
      */
     @Override
     public boolean isMatching(Automaton automaton, String input) throws AutomatonException {
+        // Reset the automaton securely
+        automaton.reset();
+
         // Prepare the working variables
         int cursor = 0;
 
@@ -51,7 +54,7 @@ public class NaiveStrategy implements SearchStrategy {
         }
 
         // The default result, if the input cannot match
-        return false;
+        return automaton.isInFinalState();
     }
 
 }

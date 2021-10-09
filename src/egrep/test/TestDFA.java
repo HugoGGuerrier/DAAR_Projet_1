@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("A test suite for the NDFA creation")
+@DisplayName("A test suite for the DFA creation")
 public class TestDFA {
 
     /**

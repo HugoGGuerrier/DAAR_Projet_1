@@ -244,6 +244,19 @@ public class Automaton {
     }
 
     /**
+     * Get if the automaton is currently in a final state
+     *
+     * @return True of the automaton is in a final state
+     */
+    public boolean isInFinalState() throws AutomatonException {
+        if(determinist) {
+            return automaton.get(currentNode).get(ACCEPT_POS) != null;
+        } else {
+            throw new AutomatonException("The automaton need to be deterministic");
+        }
+    }
+
+    /**
      * Reset the automaton from the inputs
      *
      * @throws AutomatonException If the automaton is not deterministic
