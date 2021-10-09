@@ -13,7 +13,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("A test suite for the NDFA creation")
-public class TestNDFA {
+public class TestDFA {
 
     /**
      * Check the test suite availability
@@ -24,7 +24,51 @@ public class TestNDFA {
     }
 
     /**
-     * Test the concatenation NDFA creation
+     * Test the DFA creation on the aho ullman example
+     */
+    @Test
+    void testAhoUllman() {
+        try {
+
+            // Create the DFA and test its structure
+            Automaton automaton = new Automaton(RegExParser.exampleAhoUllman(), false);
+            automaton.createNDFA();
+            automaton.createDFA();
+            Map<NodeId, ArrayList<List<NodeId>>> map = automaton.getAutomaton();
+            NodeId currNode = automaton.getInitNode();
+
+            assertNotNull(map.get(currNode).get('a'));
+            assertNotNull(map.get(currNode).get('b'));
+            assertEquals(1, map.get(currNode).get('a').size());
+            assertEquals(1, map.get(currNode).get('b').size());
+            NodeId leftNode = map.get(currNode).get('a').get(0);
+            NodeId rightNode = map.get(currNode).get('b').get(0);
+
+            currNode = leftNode;
+
+            assertNotNull(map.get(currNode).get(Automaton.ACCEPT_POS));
+
+            currNode = rightNode;
+
+            assertNotNull(map.get(currNode).get(Automaton.ACCEPT_POS));
+
+            assertNotNull(map.get(currNode).get('c'));
+            assertEquals(1, map.get(currNode).get('c').size());
+            currNode = map.get(currNode).get('c').get(0);
+
+            assertNotNull(map.get(currNode).get(Automaton.ACCEPT_POS));
+
+            assertNotNull(map.get(currNode).get('c'));
+            assertEquals(1, map.get(currNode).get('c').size());
+            assertEquals(currNode, map.get(currNode).get('c').get(0));
+
+        } catch(Exception e) {
+            fail(e);
+        }
+    }
+
+    /**
+     * Test the DFA creation for the concatenation
      */
     @Test
     void testConcat() {
@@ -34,9 +78,10 @@ public class TestNDFA {
 
         try {
 
-            // Get the ndfa for this regex and test its structure
+            // Create the DFA and test its structure
             Automaton automaton = new Automaton(parser.parse(), false);
             automaton.createNDFA();
+            automaton.createDFA();
             Map<NodeId, ArrayList<List<NodeId>>> map = automaton.getAutomaton();
             NodeId currNode = automaton.getInitNode();
 
@@ -44,17 +89,11 @@ public class TestNDFA {
             assertEquals(1, map.get(currNode).get('a').size());
             currNode = map.get(currNode).get('a').get(0);
 
-            assertNotNull(map.get(currNode).get(Automaton.EPSILON_POS));
-            assertEquals(1, map.get(currNode).get(Automaton.EPSILON_POS).size());
-            currNode = map.get(currNode).get(Automaton.EPSILON_POS).get(0);
+            assertNull(map.get(currNode).get(Automaton.ACCEPT_POS));
 
             assertNotNull(map.get(currNode).get('b'));
             assertEquals(1, map.get(currNode).get('b').size());
             currNode = map.get(currNode).get('b').get(0);
-
-            assertNotNull(map.get(currNode).get(Automaton.EPSILON_POS));
-            assertEquals(1, map.get(currNode).get(Automaton.EPSILON_POS).size());
-            currNode = map.get(currNode).get(Automaton.EPSILON_POS).get(0);
 
             assertNotNull(map.get(currNode).get(Automaton.ACCEPT_POS));
 
@@ -64,7 +103,7 @@ public class TestNDFA {
     }
 
     /**
-     * Test the dot NDFA creation
+     * Test the DFA creation for the dot
      */
     @Test
     void testDot() {
@@ -74,19 +113,16 @@ public class TestNDFA {
 
         try {
 
-            // Get the ndfa for this regex and test its structure
+            // Create the DFA and test its structure
             Automaton automaton = new Automaton(parser.parse(), false);
             automaton.createNDFA();
+            automaton.createDFA();
             Map<NodeId, ArrayList<List<NodeId>>> map = automaton.getAutomaton();
             NodeId currNode = automaton.getInitNode();
 
             assertNotNull(map.get(currNode).get(Automaton.DOT_POS));
             assertEquals(1, map.get(currNode).get(Automaton.DOT_POS).size());
             currNode = map.get(currNode).get(Automaton.DOT_POS).get(0);
-
-            assertNotNull(map.get(currNode).get(Automaton.EPSILON_POS));
-            assertEquals(1, map.get(currNode).get(Automaton.EPSILON_POS).size());
-            currNode = map.get(currNode).get(Automaton.EPSILON_POS).get(0);
 
             assertNotNull(map.get(currNode).get(Automaton.ACCEPT_POS));
 
@@ -96,7 +132,7 @@ public class TestNDFA {
     }
 
     /**
-     * Test the star NDFA creation
+     * Test the DFA creation for the star
      */
     @Test
     void testStar() {
@@ -106,37 +142,24 @@ public class TestNDFA {
 
         try {
 
-            // Get the ndfa for this regex and test its structure
+            // Create the DFA and test its structure
             Automaton automaton = new Automaton(parser.parse(), false);
             automaton.createNDFA();
+            automaton.createDFA();
             Map<NodeId, ArrayList<List<NodeId>>> map = automaton.getAutomaton();
             NodeId currNode = automaton.getInitNode();
 
-            assertNotNull(map.get(currNode).get(Automaton.EPSILON_POS));
-            assertEquals(2, map.get(currNode).get(Automaton.EPSILON_POS).size());
-            NodeId loopEntryNode = map.get(currNode).get(Automaton.EPSILON_POS).get(0);
-            NodeId exitNode = map.get(currNode).get(Automaton.EPSILON_POS).get(1);
-            currNode = map.get(currNode).get(Automaton.EPSILON_POS).get(0);
+            assertNotNull(map.get(currNode).get(Automaton.ACCEPT_POS));
 
             assertNotNull(map.get(currNode).get('a'));
             assertEquals(1, map.get(currNode).get('a').size());
             currNode = map.get(currNode).get('a').get(0);
 
-            assertNotNull(map.get(currNode).get(Automaton.EPSILON_POS));
-            assertEquals(1, map.get(currNode).get(Automaton.EPSILON_POS).size());
-            currNode = map.get(currNode).get(Automaton.EPSILON_POS).get(0);
-
-            assertNotNull(map.get(currNode).get(Automaton.EPSILON_POS));
-            assertEquals(2, map.get(currNode).get(Automaton.EPSILON_POS).size());
-            assertEquals(loopEntryNode, map.get(currNode).get(Automaton.EPSILON_POS).get(0));
-            currNode = map.get(currNode).get(Automaton.EPSILON_POS).get(1);
-            assertEquals(exitNode, currNode);
-
-            assertNotNull(map.get(currNode).get(Automaton.EPSILON_POS));
-            assertEquals(1, map.get(currNode).get(Automaton.EPSILON_POS).size());
-            currNode = map.get(currNode).get(Automaton.EPSILON_POS).get(0);
-
             assertNotNull(map.get(currNode).get(Automaton.ACCEPT_POS));
+
+            assertNotNull(map.get(currNode).get('a'));
+            assertEquals(1, map.get(currNode).get('a').size());
+            assertEquals(currNode, map.get(currNode).get('a').get(0));
 
         } catch(Exception e) {
             fail(e);
@@ -144,7 +167,7 @@ public class TestNDFA {
     }
 
     /**
-     * Test the alternative NDFA creation
+     * Test the DFA creation for the altern
      */
     @Test
     void testAltern() {
@@ -154,38 +177,25 @@ public class TestNDFA {
 
         try {
 
-            // Get the ndfa for this regex and test its structure
+            // Create the DFA and test its structure
             Automaton automaton = new Automaton(parser.parse(), false);
             automaton.createNDFA();
+            automaton.createDFA();
             Map<NodeId, ArrayList<List<NodeId>>> map = automaton.getAutomaton();
             NodeId currNode = automaton.getInitNode();
 
-            assertNotNull(map.get(currNode).get(Automaton.EPSILON_POS));
-            assertEquals(2, map.get(currNode).get(Automaton.EPSILON_POS).size());
-            NodeId leftNode = map.get(currNode).get(Automaton.EPSILON_POS).get(0);
-            NodeId rightNode = map.get(currNode).get(Automaton.EPSILON_POS).get(1);
+            assertNotNull(map.get(currNode).get('a'));
+            assertNotNull(map.get(currNode).get('b'));
+            assertEquals(1, map.get(currNode).get('a').size());
+            assertEquals(1, map.get(currNode).get('b').size());
+            NodeId leftNode = map.get(currNode).get('a').get(0);
+            NodeId rightNode = map.get(currNode).get('b').get(0);
 
             currNode = leftNode;
-
-            assertNotNull(map.get(currNode).get('a'));
-            assertEquals(1, map.get(currNode).get('a').size());
-            currNode = map.get(currNode).get('a').get(0);
-
-            assertNotNull(map.get(currNode).get(Automaton.EPSILON_POS));
-            assertEquals(1, map.get(currNode).get(Automaton.EPSILON_POS).size());
-            currNode = map.get(currNode).get(Automaton.EPSILON_POS).get(0);
 
             assertNotNull(map.get(currNode).get(Automaton.ACCEPT_POS));
 
             currNode = rightNode;
-
-            assertNotNull(map.get(currNode).get('b'));
-            assertEquals(1, map.get(currNode).get('b').size());
-            currNode = map.get(currNode).get('b').get(0);
-
-            assertNotNull(map.get(currNode).get(Automaton.EPSILON_POS));
-            assertEquals(1, map.get(currNode).get(Automaton.EPSILON_POS).size());
-            currNode = map.get(currNode).get(Automaton.EPSILON_POS).get(0);
 
             assertNotNull(map.get(currNode).get(Automaton.ACCEPT_POS));
 

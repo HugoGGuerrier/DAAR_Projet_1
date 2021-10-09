@@ -149,4 +149,29 @@ public class TestParser {
         }
     }
 
+    /**
+     * Test the parenthesis parsing
+     */
+    @Test
+    void testParen() {
+        // Define the regex and prepare the parser
+        String regex = "(ab)|(ac)";
+        RegExParser parser = new RegExParser(regex);
+
+        try {
+
+            // Get the result tree
+            RegExTree tree = parser.parse();
+
+            // Test the tree
+            assertEquals(RegExParser.ALTERN, tree.getRoot());
+            assertEquals(2, tree.getSubTrees().size());
+            assertEquals(RegExParser.CONCAT, tree.getSubTrees().get(0).getRoot());
+            assertEquals(RegExParser.CONCAT, tree.getSubTrees().get(1).getRoot());
+
+        } catch(Exception e) {
+            fail(e);
+        }
+    }
+
 }
