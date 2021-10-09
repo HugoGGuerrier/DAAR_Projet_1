@@ -12,6 +12,7 @@ Version : 0.4
 
 * Compiler : `ant build`
 * Tester : `ant test` (Si une erreur survient : `ant test -lib lib`)
+* Exécuter le programme et lancer les tests Benchmark `java -jar bin/egrep.jar -b`
 * Créer un jar : `ant jar`
 * Nettoyer : `ant clean`
 * Exécuter le programme et afficher l'aide `java -jar bin/egrep.jar -h`

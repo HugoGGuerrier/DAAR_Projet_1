@@ -71,9 +71,13 @@ public class KMPStrategy implements SearchStrategy {
      */
     private void buildCarryOver() {
         // Initialize the carry over array
+        /* TODO
         carryOver = new int[factor.length() + 1];
         carryOver[0] = -1;                     // First value is always -1
         carryOver[carryOver.length - 1] = 0;   // Last value is always 0
+        */
+        carryOver = new int[factor.length()];
+        carryOver[0] = -1;                     // First value is always -1
 
         // Iterate on the factor (F) (ignoring first character) to compute each corresponding value of the carry over (CO)
         for (int i = 1 ; i < factor.length() ; i++) {
@@ -98,11 +102,20 @@ public class KMPStrategy implements SearchStrategy {
 
         // Optimizing the carry over values (eliminating redundancy)
         for (int i = 0 ; i < factor.length() ; i++) {
-            if (factor.charAt(i) == factor.charAt(carryOver[i]) && carryOver[i] >= 0) {
+            if (carryOver[i] >= 0 && factor.charAt(i) == factor.charAt(carryOver[i])) {
                 carryOver[i] = carryOver[carryOver[i]];
             }
         }
     }
+
+    public boolean equalsCarryOver(int[] expectedCarryOver) {
+        if (expectedCarryOver.length != carryOver.length) return false;
+        for (int i = 0 ; i < carryOver.length ; i++) {
+            if (expectedCarryOver[i] != carryOver[i] ) return false;
+        }
+        return true;
+    }
+
 
     // ----- Override methods -----
 
@@ -123,19 +136,19 @@ public class KMPStrategy implements SearchStrategy {
         // Iterate over all the input
         while (inputPos < input.length()) {
 
-            // If we tested all the regex without problems, return true
-            if (factorPos == factor.length()) return true;
-
-            // Test if there is a match
-            if (input.charAt(inputPos) == factor.charAt(factorPos)) {
+            // Test if there is a match (the dot character always matches)
+            if (input.charAt(inputPos) == factor.charAt(factorPos) || factor.charAt(factorPos) == '.') {
                 // It's a match ! Go to the next character to test
                 inputPos++;
                 factorPos++;
             } else {
                 // Not a match. Use the carry over to update the input position, and return to the start of the regex
-                inputPos -= carryOver[factorPos];
+                inputPos = inputPos - carryOver[factorPos];
                 factorPos = 0;
             }
+
+            // If we tested all the regex without problems, return true
+            if (factorPos == factor.length()) return true;
         }
 
         // The default result, if we tested all the input without finding a match
