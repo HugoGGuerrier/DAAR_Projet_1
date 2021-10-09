@@ -1,7 +1,7 @@
 # DAAR | Projet 1 : Clone de "egrep"
 
 Auteurs : Emilie SIAU | Hugo GUERRIER\
-Version : 0.4
+Version : 0.5
 
 ## Dépendances :
 
@@ -12,14 +12,7 @@ Version : 0.4
 
 * Compiler : `ant build`
 * Tester : `ant test` (Si une erreur survient : `ant test -lib lib`)
-* Exécuter le programme et lancer les tests Benchmark `java -jar bin/egrep.jar -b`
 * Créer un jar : `ant jar`
-* Nettoyer : `ant clean`
+* Exécuter le programme et lancer les tests Benchmark `java -jar bin/egrep.jar -b`
 * Exécuter le programme et afficher l'aide `java -jar bin/egrep.jar -h`
-
-## A faire :
-
-* Faire l'algo de KMP
-* Faire la suite de tests pour l'automate
-* Faire les tests de performance (Le mode benchmark)
-* Faire le rapport
+* Nettoyer : `ant clean`
