@@ -120,7 +120,7 @@ public class Main {
 
         }
 
-        // Test the kmp strategy and show the result
+        // Test the KMP strategy and show the result
         System.out.println("=== KMP strategy benchmark on file size, for the regex \"Babylon\"\n");
         for(int i = 0 ; i < testFiles.length ; i++) {
             String testFile = testFiles[i];
@@ -139,7 +139,6 @@ public class Main {
                 e.printStackTrace();
                 return;
             }
-
         }
     }
 
@@ -219,7 +218,6 @@ public class Main {
                 if(benchmarkFlag) benchmark();
                 else run();
             }
-
         }
     }
 }

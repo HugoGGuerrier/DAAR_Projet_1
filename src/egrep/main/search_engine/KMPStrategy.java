@@ -4,7 +4,6 @@ import egrep.main.automaton.Automaton;
 import egrep.main.exceptions.AutomatonException;
 import egrep.main.parser.RegExParser;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,8 +18,8 @@ public class KMPStrategy implements SearchStrategy {
     // ----- Attributes -----
 
     private final Set<Character> ignoredChars;
-    private String factor;
-    private int[] carryOver;
+    private String factor;      // The regex factor representation
+    private int[] carryOver;    // The carry over array
 
     // ----- Constructors -----
 
@@ -35,7 +34,6 @@ public class KMPStrategy implements SearchStrategy {
 
         // Create the carry over array from the sanitized string
         buildCarryOver();
-
     }
 
     // ----- Class methods -----
@@ -99,15 +97,48 @@ public class KMPStrategy implements SearchStrategy {
         }
 
         // Optimizing the carry over values (eliminating redundancy)
-        // TODO
-
+        for (int i = 0 ; i < factor.length() ; i++) {
+            if (factor.charAt(i) == factor.charAt(carryOver[i]) && carryOver[i] >= 0) {
+                carryOver[i] = carryOver[carryOver[i]];
+            }
+        }
     }
 
     // ----- Override methods -----
 
+    /**
+     * Tell if the input corresponds to the regex, using the KMP strategy
+     *
+     * @param ignored The automaton is ignored. You can give a null automaton
+     * @param input The input string
+     * @return true if the input matches with the regex, false otherwise
+     * @throws AutomatonException Cannot happen. Does not use automaton (ignored)
+     */
     @Override
     public boolean isMatching(Automaton ignored, String input) throws AutomatonException {
-        // TODO
+        // Prepare the working variables
+        int inputPos = 0;
+        int factorPos = 0;
+
+        // Iterate over all the input
+        while (inputPos < input.length()) {
+
+            // If we tested all the regex without problems, return true
+            if (factorPos == factor.length()) return true;
+
+            // Test if there is a match
+            if (input.charAt(inputPos) == factor.charAt(factorPos)) {
+                // It's a match ! Go to the next character to test
+                inputPos++;
+                factorPos++;
+            } else {
+                // Not a match. Use the carry over to update the input position, and return to the start of the regex
+                inputPos -= carryOver[factorPos];
+                factorPos = 0;
+            }
+        }
+
+        // The default result, if we tested all the input without finding a match
         return false;
     }
 
