@@ -2,11 +2,9 @@ package egrep.main;
 
 import egrep.main.exceptions.AutomatonException;
 import egrep.main.exceptions.ParsingException;
-import egrep.main.exceptions.SearchEngineException;
 import egrep.main.search_engine.SearchEngine;
 import egrep.main.utils.Pair;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -15,7 +13,7 @@ import java.util.List;
  *
  * @author Emilie SIAU
  * @author Hugo GUERRIER
- * @version 0.4
+ * @version 0.5
  */
 public class Main {
 
@@ -23,7 +21,7 @@ public class Main {
 
     public static boolean verboseFlag = false;
 
-    private static final String version = "0.4";
+    private static final String version = "0.5";
 
     private static boolean helpFlag = false;
     private static boolean benchmarkFlag = false;

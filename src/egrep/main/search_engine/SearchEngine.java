@@ -136,6 +136,8 @@ public class SearchEngine {
             lineNumber++;
         }
 
+        reader.close();
+
         // Return the result
         return res;
     }

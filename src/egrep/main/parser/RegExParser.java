@@ -4,8 +4,6 @@ import egrep.main.exceptions.ParsingException;
 
 import java.util.ArrayList;
 
-import java.lang.Exception;
-
 /**
  * The regular expression parser
  *
